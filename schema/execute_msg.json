@@ -12,17 +12,17 @@
           "type": "object",
           "required": [
             "counterparty",
-            "token_a",
-            "token_b"
+            "counterparty_token",
+            "initiator_token"
           ],
           "properties": {
             "counterparty": {
               "$ref": "#/definitions/Addr"
             },
-            "token_a": {
+            "counterparty_token": {
               "$ref": "#/definitions/TokenInfo"
             },
-            "token_b": {
+            "initiator_token": {
               "$ref": "#/definitions/TokenInfo"
             }
           }

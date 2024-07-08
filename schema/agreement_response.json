@@ -19,15 +19,18 @@
       "type": "object",
       "required": [
         "counterparty",
+        "counterparty_token",
         "id",
         "initiator",
-        "status",
-        "token_a",
-        "token_b"
+        "initiator_token",
+        "status"
       ],
       "properties": {
         "counterparty": {
           "$ref": "#/definitions/Addr"
+        },
+        "counterparty_token": {
+          "$ref": "#/definitions/TokenInfo"
         },
         "id": {
           "type": "integer",
@@ -37,14 +40,11 @@
         "initiator": {
           "$ref": "#/definitions/Addr"
         },
+        "initiator_token": {
+          "$ref": "#/definitions/TokenInfo"
+        },
         "status": {
           "type": "string"
-        },
-        "token_a": {
-          "$ref": "#/definitions/TokenInfo"
-        },
-        "token_b": {
-          "$ref": "#/definitions/TokenInfo"
         }
       }
     },
