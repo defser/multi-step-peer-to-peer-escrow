@@ -1,11 +1,12 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, to_json_binary, Uint128, Coin, BankMsg, coin};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, BankMsg, coin, to_json_binary};
 use cw2::{set_contract_version};
 
 use crate::error::ContractError;
-use crate::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
-use crate::state::{Agreement, AGREEMENTS, AGREEMENT_COUNT};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
+use crate::state::{Agreement, AGREEMENTS, AGREEMENT_COUNT, query_agreement, query_agreements_by_initiator, query_agreements_by_counterparty};
+use crate::utils::{assert_agreement_has_status, assert_contract_has_sufficient_funds, assert_funds_match_token_amount, assert_sender_authorized, assert_sender_match_counterparty};
 
 const CONTRACT_NAME: &str = "crates.io:simple-token-agreement";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -175,122 +176,12 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     }
 }
 
-fn query_agreement(deps: Deps, id: u64) -> StdResult<AgreementResponse> {
-    let agreement = AGREEMENTS.load(deps.storage, id)?;
-    Ok(AgreementResponse { agreement })
-}
-
-fn query_agreements_by_initiator(deps: Deps, initiator: Addr) -> StdResult<AgreementsResponse> {
-    let agreements: Vec<Agreement> = AGREEMENTS
-        .range(deps.storage, None, None, cosmwasm_std::Order::Ascending)
-        .filter_map(|item| match item {
-            Ok((_, agreement)) if agreement.initiator == initiator => Some(agreement),
-            _ => None,
-        })
-        .collect();
-
-    Ok(AgreementsResponse { agreements })
-}
-
-fn query_agreements_by_counterparty(deps: Deps, counterparty: Addr) -> StdResult<AgreementsResponse> {
-    let agreements: Vec<Agreement> = AGREEMENTS
-        .range(deps.storage, None, None, cosmwasm_std::Order::Ascending)
-        .filter_map(|item| match item {
-            Ok((_, agreement)) => {
-                if agreement.counterparty == counterparty {
-                    Some(agreement)
-                } else {
-                    None
-                }
-            },
-            Err(_) => None,
-        })
-        .collect();
-
-    Ok(AgreementsResponse { agreements })
-}
-
-fn assert_sender_match_counterparty(sender: &Addr, counterparty: &Addr) -> Result<(), ContractError> {
-    if sender != counterparty {
-        return Err(ContractError::Unauthorized {
-            expected: counterparty.to_string(),
-            found: sender.to_string()
-        });
-    }
-
-    Ok(())
-}
-
-fn assert_sender_authorized(sender: &Addr, authorized_senders: &[&Addr]) -> Result<(), ContractError> {
-    if !authorized_senders.contains(&sender) {
-        return Err(ContractError::Unauthorized {
-            expected: authorized_senders.iter().map(|addr| addr.to_string()).collect::<Vec<_>>().join(" or "),
-            found: sender.to_string(),
-        });
-    }
-    Ok(())
-}
-
-fn assert_agreement_has_status(agreement_status: &str, allowed_statuses: &[&str]) -> Result<(), ContractError> {
-    if !allowed_statuses.contains(&agreement_status) {
-        return Err(ContractError::InvalidAgreementStatus {
-            expected: allowed_statuses.join(", "),
-            found: agreement_status.to_string(),
-        });
-    }
-
-    Ok(())
-}
-
-
-fn assert_funds_match_token_amount(funds: &Vec<Coin>, token: &TokenInfo) -> Result<(), ContractError> {
-    let token_amount = Uint128::from(token.amount);
-
-    for coin in funds.iter() {
-        if coin.denom != token.address.to_string() {
-            return Err(ContractError::UnexpectedFunds {
-                expected: token.address.to_string(),
-                found: coin.denom.clone(),
-            });
-        }
-    }
-
-    let sent_funds = funds.iter().find(|coin| coin.denom == token.address.to_string());
-
-    match sent_funds {
-        Some(coin) if coin.amount == token_amount => Ok(()),
-        Some(coin) => Err(ContractError::IncorrectFundsAmount {
-            expected: token_amount.to_string(),
-            found: coin.amount.to_string(),
-        }),
-        None => Err(ContractError::InsufficientFunds {}),
-    }
-}
-
-fn assert_contract_has_sufficient_funds(deps: &DepsMut, env: &Env, token_info: &TokenInfo) -> Result<(), ContractError> {
-    let contract_addr = env.contract.address.clone();
-
-    let contract_balance = deps
-        .querier
-        .query_balance(&contract_addr, &token_info.address)?;
-
-    let token_amount = Uint128::from(token_info.amount);
-
-    if contract_balance.amount < token_amount {
-        return Err(ContractError::InsufficientContractFunds {
-            expected: token_amount.to_string(),
-            found: contract_balance.amount.to_string(),
-        });
-    }
-
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use cosmwasm_std::testing::{mock_dependencies_with_balance, mock_env, message_info, mock_dependencies_with_balances};
     use cosmwasm_std::{coin, coins, from_json};
+    use crate::msg::{AgreementResponse, AgreementsResponse};
 
     #[test]
     fn proper_initialization() {
