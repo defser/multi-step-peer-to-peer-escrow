@@ -29,6 +29,11 @@ pub enum ExecuteMsg {
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     GetAgreement { id: u64 },
+    GetTotalAgreementCount,
+    GetInitiatedAgreementCount,
+    GetAcceptedAgreementCount,
+    GetExecutedAgreementCount,
+    GetCanceledAgreementCount,
     GetAgreementsByInitiator { initiator: Addr, page: u64, page_size: u64 },
     GetAgreementsByCounterparty { counterparty: Addr, page: u64, page_size: u64 },
     GetAgreementsByStatus { status: String, page: u64, page_size: u64 },
@@ -47,6 +52,31 @@ pub struct TokenType {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct AgreementResponse {
     pub agreement: Agreement,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct TotalAgreementCountResponse {
+    pub total_agreement_count: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct InitiatedAgreementCountResponse {
+    pub initiated_agreement_count: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct AcceptedAgreementCountResponse {
+    pub accepted_agreement_count: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct ExecutedAgreementCountResponse {
+    pub executed_agreement_count: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct CanceledAgreementCountResponse {
+    pub canceled_agreement_count: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
