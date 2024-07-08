@@ -6,24 +6,24 @@ pub enum ContractError {
     #[error(transparent)]
     Std(#[from] StdError),
 
-    #[error("Unauthorized: expecting `{expected}`, found `{found}`")]
-    Unauthorized { expected: String, found: String },
+    #[error("Unauthorized: expected `{expected}`, but found `{found}`")]
+    Unauthorized { expected: String, found: String, },
 
     #[error("Insufficient funds sent")]
-    InsufficientFunds { },
+    InsufficientFunds,
 
-    #[error("Incorrect funds amount sent: expecting `{expected}`, found `{found}`")]
-    IncorrectFundsAmount { expected: String, found: String },
+    #[error("Incorrect funds amount sent: expected `{expected}`, but found `{found}`")]
+    IncorrectFundsAmount { expected: String, found: String, },
 
-    #[error("Invalid Agreement Status: expecting `{expected}`, found `{found}`")]
-    InvalidAgreementStatus { expected: String, found: String },
+    #[error("Invalid agreement status: expected `{expected}`, but found `{found}`")]
+    InvalidAgreementStatus { expected: String, found: String, },
 
-    #[error("Unexpected funds found: expecting `{expected}`, found `{found}`")]
-    UnexpectedFunds { expected: String, found: String },
+    #[error("Unexpected funds found: expected `{expected}`, but found `{found}`")]
+    UnexpectedFunds { expected: String, found: String, },
 
-    #[error("Insufficient contract funds: expecting `{expected}`, found `{found}`")]
-    InsufficientContractFunds { expected: String, found: String },
+    #[error("Insufficient contract funds: expected `{expected}`, but found `{found}`")]
+    InsufficientContractFunds { expected: String, found: String, },
 
     #[error("Invalid counterparty: counterparty `{counterparty}` cannot be the same as initiator `{initiator}`")]
-    InvalidCounterparty { initiator: String, counterparty: String },
+    InvalidCounterparty { initiator: String, counterparty: String, },
 }
