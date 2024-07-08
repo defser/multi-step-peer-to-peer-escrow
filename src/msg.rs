@@ -52,10 +52,6 @@ impl TokenInfo {
     }
 }
 
-pub struct TokenType {
-
-}
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct AgreementResponse {
     pub agreement: Agreement,
