@@ -68,4 +68,18 @@ mod tests {
             app.execute(Addr::unchecked(USER), cosmos_msg).unwrap();
         }
     }
+
+    mod reset {
+        use super::*;
+        use crate::msg::ExecuteMsg;
+
+        #[test]
+        fn reset() {
+            let (mut app, cw_template_contract) = proper_instantiate();
+
+            let msg = ExecuteMsg::Reset {count: 5};
+            let cosmos_msg = cw_template_contract.call(msg).unwrap();
+            app.execute(Addr::unchecked(ADMIN), cosmos_msg).unwrap();
+        }
+    }
 }
