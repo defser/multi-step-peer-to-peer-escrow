@@ -3,16 +3,6 @@
   "title": "QueryMsg",
   "oneOf": [
     {
-      "type": "string",
-      "enum": [
-        "get_total_agreement_count",
-        "get_initiated_agreement_count",
-        "get_accepted_agreement_count",
-        "get_executed_agreement_count",
-        "get_canceled_agreement_count"
-      ]
-    },
-    {
       "type": "object",
       "required": [
         "get_agreement"
@@ -30,6 +20,66 @@
               "minimum": 0.0
             }
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_total_agreement_count"
+      ],
+      "properties": {
+        "get_total_agreement_count": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_initiated_agreement_count"
+      ],
+      "properties": {
+        "get_initiated_agreement_count": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_accepted_agreement_count"
+      ],
+      "properties": {
+        "get_accepted_agreement_count": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_executed_agreement_count"
+      ],
+      "properties": {
+        "get_executed_agreement_count": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_canceled_agreement_count"
+      ],
+      "properties": {
+        "get_canceled_agreement_count": {
+          "type": "object"
         }
       },
       "additionalProperties": false

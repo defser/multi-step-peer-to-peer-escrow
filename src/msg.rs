@@ -29,11 +29,11 @@ pub enum ExecuteMsg {
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     GetAgreement { id: u64 },
-    GetTotalAgreementCount,
-    GetInitiatedAgreementCount,
-    GetAcceptedAgreementCount,
-    GetExecutedAgreementCount,
-    GetCanceledAgreementCount,
+    GetTotalAgreementCount {},
+    GetInitiatedAgreementCount {},
+    GetAcceptedAgreementCount {},
+    GetExecutedAgreementCount {},
+    GetCanceledAgreementCount {},
     GetAgreementsByInitiator { initiator: Addr, page: u64, page_size: u64 },
     GetAgreementsByCounterparty { counterparty: Addr, page: u64, page_size: u64 },
     GetAgreementsByStatus { status: String, page: u64, page_size: u64 },

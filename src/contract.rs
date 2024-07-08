@@ -251,11 +251,11 @@ fn cancel_agreement(
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::GetAgreement { id } => to_json_binary(&query_agreement(deps, id)?),
-        QueryMsg::GetTotalAgreementCount => to_json_binary(&query_total_agreement_count(deps)?),
-        QueryMsg::GetInitiatedAgreementCount => to_json_binary(&query_initiated_agreement_count(deps)?),
-        QueryMsg::GetAcceptedAgreementCount => to_json_binary(&query_accepted_agreement_count(deps)?),
-        QueryMsg::GetExecutedAgreementCount => to_json_binary(&query_executed_agreement_count(deps)?),
-        QueryMsg::GetCanceledAgreementCount => to_json_binary(&query_canceled_agreement_count(deps)?),
+        QueryMsg::GetTotalAgreementCount {} => to_json_binary(&query_total_agreement_count(deps)?),
+        QueryMsg::GetInitiatedAgreementCount {} => to_json_binary(&query_initiated_agreement_count(deps)?),
+        QueryMsg::GetAcceptedAgreementCount {} => to_json_binary(&query_accepted_agreement_count(deps)?),
+        QueryMsg::GetExecutedAgreementCount {} => to_json_binary(&query_executed_agreement_count(deps)?),
+        QueryMsg::GetCanceledAgreementCount {} => to_json_binary(&query_canceled_agreement_count(deps)?),
         QueryMsg::GetAgreementsByInitiator { initiator, page, page_size } => {
             let start_after = page.checked_mul(page_size).unwrap_or(0);
             let end_before = start_after.checked_add(page_size).unwrap_or(u64::MAX);
