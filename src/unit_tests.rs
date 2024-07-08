@@ -5,7 +5,7 @@ mod tests {
     use crate::contract::{STATUS_ACCEPTED, STATUS_CANCELED, STATUS_EXECUTED, STATUS_INITIATED, execute, instantiate, query};
     use crate::ContractError;
     use crate::helpers::{check_agreement_counts, initialize_contract, initiate_new_agreement};
-    use crate::msg::{TotalAgreementCountResponse, AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
+    use crate::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
 
     #[test]
     fn contract_initialization() {
@@ -441,7 +441,7 @@ mod tests {
     }
 
     #[test]
-    fn query_total_agreement_count() {
+    fn query_total_and_initiated_agreement_count() {
         let mut deps = initialize_contract();
 
         let initiator_token = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
@@ -454,8 +454,81 @@ mod tests {
         let msg = ExecuteMsg::InitiateAgreement { initiator_token: initiator_token.clone(), counterparty_token: counterparty_token.clone(), counterparty: Addr::unchecked("counterparty2") };
         let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
 
-        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetTotalAgreementCount).unwrap();
-        let value: TotalAgreementCountResponse = from_json(&res).unwrap();
-        assert_eq!(value.total_agreement_count, 2);
+        // Check agreement status counts
+        check_agreement_counts(&deps, 2, 2, 0, 0, 0);
+    }
+
+    #[test]
+    fn query_accepted_agreement_count() {
+        let mut deps = initialize_contract();
+
+        let initiator_token = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
+        let counterparty_token = TokenInfo { address: Addr::unchecked("tokenB"), amount: 2000u128 };
+
+        let msg = ExecuteMsg::InitiateAgreement { initiator_token: initiator_token.clone(), counterparty_token: counterparty_token.clone(), counterparty: Addr::unchecked("counterparty") };
+        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "tokenA"));
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
+
+        let msg = ExecuteMsg::InitiateAgreement { initiator_token: initiator_token.clone(), counterparty_token: counterparty_token.clone(), counterparty: Addr::unchecked("counterparty2") };
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
+
+        let msg = ExecuteMsg::AcceptAgreement { id: 1 };
+        let info = message_info(&Addr::unchecked("counterparty"), &coins(2000, "tokenB"));
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg);
+
+        // Check agreement status counts
+        check_agreement_counts(&deps, 2, 1, 1, 0, 0);
+    }
+
+    #[test]
+    fn query_executed_agreement_count() {
+        let mut deps = initialize_contract();
+
+        let initiator_token = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
+        let counterparty_token = TokenInfo { address: Addr::unchecked("tokenB"), amount: 2000u128 };
+
+        let msg = ExecuteMsg::InitiateAgreement { initiator_token: initiator_token.clone(), counterparty_token: counterparty_token.clone(), counterparty: Addr::unchecked("counterparty") };
+        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "tokenA"));
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
+
+        let msg = ExecuteMsg::InitiateAgreement { initiator_token: initiator_token.clone(), counterparty_token: counterparty_token.clone(), counterparty: Addr::unchecked("counterparty2") };
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
+
+        let msg = ExecuteMsg::AcceptAgreement { id: 1 };
+        let info = message_info(&Addr::unchecked("counterparty"), &coins(2000, "tokenB"));
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg);
+
+        let execute_msg = ExecuteMsg::ExecuteAgreement { id: 1 };
+        let execute_info = message_info(&Addr::unchecked("initiator"), &[]);
+        let _res = execute(deps.as_mut(), mock_env(), execute_info.clone(), execute_msg);
+
+        // Check agreement status counts
+        check_agreement_counts(&deps, 2, 1, 0, 1, 0);
+    }
+
+    #[test]
+    fn query_canceled_agreement_count() {
+        let mut deps = initialize_contract();
+
+        let initiator_token = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
+        let counterparty_token = TokenInfo { address: Addr::unchecked("tokenB"), amount: 2000u128 };
+
+        let msg = ExecuteMsg::InitiateAgreement { initiator_token: initiator_token.clone(), counterparty_token: counterparty_token.clone(), counterparty: Addr::unchecked("counterparty") };
+        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "tokenA"));
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
+
+        let msg = ExecuteMsg::InitiateAgreement { initiator_token: initiator_token.clone(), counterparty_token: counterparty_token.clone(), counterparty: Addr::unchecked("counterparty2") };
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
+
+        let msg = ExecuteMsg::AcceptAgreement { id: 1 };
+        let info = message_info(&Addr::unchecked("counterparty"), &coins(2000, "tokenB"));
+        let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg);
+
+        let execute_msg = ExecuteMsg::CancelAgreement { id: 1 };
+        let execute_info = message_info(&Addr::unchecked("initiator"), &[]);
+        let _res = execute(deps.as_mut(), mock_env(), execute_info.clone(), execute_msg);
+
+        // Check agreement status counts
+        check_agreement_counts(&deps, 2, 1, 0, 0, 1);
     }
 }

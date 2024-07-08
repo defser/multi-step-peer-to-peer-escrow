@@ -3,6 +3,16 @@
   "title": "QueryMsg",
   "oneOf": [
     {
+      "type": "string",
+      "enum": [
+        "get_total_agreement_count",
+        "get_initiated_agreement_count",
+        "get_accepted_agreement_count",
+        "get_executed_agreement_count",
+        "get_canceled_agreement_count"
+      ]
+    },
+    {
       "type": "object",
       "required": [
         "get_agreement"
