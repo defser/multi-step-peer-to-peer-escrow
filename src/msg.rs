@@ -1,27 +1,48 @@
+use cosmwasm_std::Addr;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use crate::state::Agreement;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct InstantiateMsg {
-    pub count: i32,
-}
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct InstantiateMsg {}
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum ExecuteMsg {
-    Increment {},
-    Reset { count: i32 },
+    InitiateAgreement {
+        token_a: TokenInfo,
+        token_b: TokenInfo,
+        counterparty: Addr,
+    },
+    AcceptAgreement {
+        id: u64,
+    },
+    ExecuteAgreement {
+        id: u64,
+    },
+    CancelAgreement {
+        id: u64,
+    },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum QueryMsg {
-    // GetCount returns the current count as a json-encoded number
-    GetCount {},
+    GetAgreement { id: u64 },
+    GetAgreementsByInitiator { initiator: Addr },
+    GetAgreementsByCounterparty { counterparty: Addr },
 }
 
-// We define a custom struct for each query response
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct CountResponse {
-    pub count: i32,
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct TokenInfo {
+    pub address: Addr,
+    pub amount: u128,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct AgreementResponse {
+    pub agreement: Agreement,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct AgreementsResponse {
+    pub agreements: Vec<Agreement>,
 }
