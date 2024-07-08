@@ -16,13 +16,3 @@
     }
   ]
 }
-
-yes 12345678 | injectived tx wasm execute inj1upfujeqjpk3xk8szlhgmddcp3cqffuy77tz2pj "$INCREMENT" --from=$(echo $INJ_ADDRESS) \
---chain-id="injective-888" \
---yes --fees=1000000000000000inj --gas=2000000 \
---node=https://k8s.testnet.tm.injective.network:443 \
---output json
-
-injectived query wasm contract-state smart inj1upfujeqjpk3xk8szlhgmddcp3cqffuy77tz2pj "$GET_COUNT_QUERY" \
---node=https://k8s.testnet.tm.injective.network:443 \
---output json
