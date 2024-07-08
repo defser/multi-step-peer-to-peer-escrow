@@ -2,7 +2,7 @@
 mod tests {
     use cosmwasm_std::testing::{mock_dependencies_with_balance, mock_env, message_info, mock_dependencies_with_balances};
     use cosmwasm_std::{Addr, coin, coins, from_json};
-    use crate::contract::{ACCEPTED, CANCELED, execute, EXECUTED, INITIATED, instantiate, query};
+    use crate::contract::{STATUS_ACCEPTED, STATUS_CANCELED, STATUS_EXECUTED, STATUS_INITIATED, execute, instantiate, query};
     use crate::ContractError;
     use crate::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
 
@@ -51,7 +51,7 @@ mod tests {
         assert_eq!(value.agreement.counterparty, Addr::unchecked("counterparty"));
         assert_eq!(value.agreement.initiator_token, initiator_token);
         assert_eq!(value.agreement.counterparty_token, counterparty_token);
-        assert_eq!(value.agreement.status, ACCEPTED);
+        assert_eq!(value.agreement.status, STATUS_ACCEPTED);
     }
 
     #[test]
@@ -350,7 +350,7 @@ mod tests {
         let query_res = query(deps.as_ref(), mock_env(), query_msg).unwrap();
         let agreement_response: AgreementResponse = from_json(&query_res).unwrap();
 
-        assert_eq!(agreement_response.agreement.status, EXECUTED);
+        assert_eq!(agreement_response.agreement.status, STATUS_EXECUTED);
     }
 
     #[test]
@@ -431,7 +431,7 @@ mod tests {
         let query_res = query(deps.as_ref(), mock_env(), query_msg).unwrap();
         let agreement_response: AgreementResponse = from_json(&query_res).unwrap();
 
-        assert_eq!(agreement_response.agreement.status, CANCELED);
+        assert_eq!(agreement_response.agreement.status, STATUS_CANCELED);
     }
 
 
@@ -463,8 +463,8 @@ mod tests {
         assert!(res.is_err());
         match res.err().unwrap() {
             ContractError::InvalidAgreementStatus { expected, found } => {
-                assert_eq!(expected, format!("{}", INITIATED));
-                assert_eq!(found, CANCELED);
+                assert_eq!(expected, format!("{}", STATUS_INITIATED));
+                assert_eq!(found, STATUS_CANCELED);
             },
             _ => panic!("Unexpected error"),
         }

@@ -2,7 +2,7 @@ use cosmwasm_std::{Addr, Coin, DepsMut, Env, Uint128};
 use crate::ContractError;
 use crate::msg::TokenInfo;
 
-pub fn assert_sender_match_counterparty(sender: &Addr, counterparty: &Addr) -> Result<(), ContractError> {
+pub fn assert_sender_matches_counterparty(sender: &Addr, counterparty: &Addr) -> Result<(), ContractError> {
     if sender != counterparty {
         return Err(ContractError::Unauthorized {
             expected: counterparty.to_string(),
