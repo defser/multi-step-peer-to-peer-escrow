@@ -1,6 +1,6 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, to_json_binary};
 use cw2::set_contract_version;
 
 use crate::error::ContractError;
@@ -135,9 +135,9 @@ fn try_cancel_agreement(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::GetAgreement { id } => to_binary(&query_agreement(deps, id)?),
-        QueryMsg::GetAgreementsByInitiator { initiator } => to_binary(&query_agreements_by_initiator(deps, initiator)?),
-        QueryMsg::GetAgreementsByCounterparty { counterparty } => to_binary(&query_agreements_by_counterparty(deps, counterparty)?),
+        QueryMsg::GetAgreement { id } => to_json_binary(&query_agreement(deps, id)?),
+        QueryMsg::GetAgreementsByInitiator { initiator } => to_json_binary(&query_agreements_by_initiator(deps, initiator)?),
+        QueryMsg::GetAgreementsByCounterparty { counterparty } => to_json_binary(&query_agreements_by_counterparty(deps, counterparty)?),
     }
 }
 
@@ -186,7 +186,7 @@ fn query_agreements_by_counterparty(deps: Deps, counterparty: Addr) -> StdResult
 mod tests {
     use super::*;
     use cosmwasm_std::testing::{mock_dependencies_with_balance, mock_env, mock_info};
-    use cosmwasm_std::{coins, from_binary};
+    use cosmwasm_std::{coins, from_json};
 
     #[test]
     fn proper_initialization() {
@@ -227,7 +227,7 @@ mod tests {
         assert_eq!(res.attributes, vec![("method", "accept_agreement"), ("id", "1")]);
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetAgreement { id: 1 }).unwrap();
-        let value: AgreementResponse = from_binary(&res).unwrap();
+        let value: AgreementResponse = from_json(&res).unwrap();
         assert_eq!(value.agreement.id, 1);
         assert_eq!(value.agreement.initiator, Addr::unchecked("initiator"));
         assert_eq!(value.agreement.counterparty, Addr::unchecked("counterparty"));
@@ -283,7 +283,7 @@ mod tests {
         let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetAgreementsByInitiator { initiator: Addr::unchecked("initiator") }).unwrap();
-        let value: AgreementsResponse = from_binary(&res).unwrap();
+        let value: AgreementsResponse = from_json(&res).unwrap();
         assert_eq!(value.agreements.len(), 2);
     }
 
@@ -306,7 +306,7 @@ mod tests {
         let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetAgreementsByCounterparty { counterparty: Addr::unchecked("counterparty") }).unwrap();
-        let value: AgreementsResponse = from_binary(&res).unwrap();
+        let value: AgreementsResponse = from_json(&res).unwrap();
         assert_eq!(value.agreements.len(), 1);
     }
 }
