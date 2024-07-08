@@ -2,8 +2,8 @@ use std::env;
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
 use std::env::current_dir;
 use std::fs::create_dir_all;
-use native_token_exchange_escrow::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
-use native_token_exchange_escrow::state::Agreement;
+use peer_to_peer_token_swap::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
+use peer_to_peer_token_swap::state::Agreement;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");

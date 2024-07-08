@@ -1,5 +1,5 @@
 [package]
-name = "native-token-exchange-escrow"
+name = "peer-to-peer-token-swap"
 version = "0.0.1"
 authors = ["0xDEFSER <info@defser.nl>"]
 edition = "2021"
