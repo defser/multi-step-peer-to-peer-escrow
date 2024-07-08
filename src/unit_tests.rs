@@ -45,8 +45,8 @@ mod tests {
             Attribute { key: "id".to_string(), value: "1".to_string() },
             Attribute { key: "initiator".to_string(), value: "initiator".to_string() },
             Attribute { key: "counterparty".to_string(), value: "counterparty".to_string() },
-            Attribute { key: "initiator_token".to_string(), value: "TokenInfo { address: Addr(\"tokenA\"), amount: 1000 }".to_string() },
-            Attribute { key: "counterparty_token".to_string(), value: "TokenInfo { address: Addr(\"tokenB\"), amount: 2000 }".to_string() }
+            Attribute { key: "initiator_token".to_string(), value: "1000tokenA".to_string() },
+            Attribute { key: "counterparty_token".to_string(), value: "2000tokenB".to_string() }
         ]);
 
         // Check agreement status counts
@@ -329,8 +329,8 @@ mod tests {
             Attribute { key: "id".to_string(), value: "1".to_string() },
             Attribute { key: "initiator".to_string(), value: "initiator".to_string() },
             Attribute { key: "counterparty".to_string(), value: "counterparty".to_string() },
-            Attribute { key: "initiator_token".to_string(), value: "TokenInfo { address: Addr(\"tokenA\"), amount: 1000 }".to_string() },
-            Attribute { key: "counterparty_token".to_string(), value: "TokenInfo { address: Addr(\"tokenB\"), amount: 2000 }".to_string() }
+            Attribute { key: "initiator_token".to_string(), value: "1000tokenA".to_string() },
+            Attribute { key: "counterparty_token".to_string(), value: "2000tokenB".to_string() }
         ]);
 
         // Check agreement status counts
@@ -364,8 +364,8 @@ mod tests {
             Attribute { key: "id".to_string(), value: "1".to_string() },
             Attribute { key: "initiator".to_string(), value: "initiator".to_string() },
             Attribute { key: "counterparty".to_string(), value: "counterparty".to_string() },
-            Attribute { key: "initiator_token".to_string(), value: "TokenInfo { address: Addr(\"tokenA\"), amount: 1000 }".to_string() },
-            Attribute { key: "counterparty_token".to_string(), value: "TokenInfo { address: Addr(\"tokenB\"), amount: 2000 }".to_string() }
+            Attribute { key: "initiator_token".to_string(), value: "1000tokenA".to_string() },
+            Attribute { key: "counterparty_token".to_string(), value: "2000tokenB".to_string() }
         ]);
 
         let msg = ExecuteMsg::AcceptAgreement { id: 1 };

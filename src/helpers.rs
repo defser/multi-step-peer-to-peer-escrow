@@ -103,8 +103,8 @@ pub fn initiate_new_agreement(deps: &mut OwnedDeps<MockStorage, MockApi, MockQue
         Attribute { key: "id".to_string(), value: "1".to_string() },
         Attribute { key: "initiator".to_string(), value: initiator.to_string() },
         Attribute { key: "counterparty".to_string(), value: counterparty.to_string() },
-        Attribute { key: "initiator_token".to_string(), value: format!("{:?}", initiator_token) },
-        Attribute { key: "counterparty_token".to_string(), value: format!("{:?}", counterparty_token) }
+        Attribute { key: "initiator_token".to_string(), value: initiator_token.clone().into_string() },
+        Attribute { key: "counterparty_token".to_string(), value: counterparty_token.clone().into_string() }
     ]);
 
     // Check agreement status counts

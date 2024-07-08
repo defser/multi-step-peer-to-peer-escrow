@@ -45,6 +45,13 @@ pub struct TokenInfo {
     pub amount: u128,
 }
 
+impl TokenInfo {
+    #[inline]
+    pub fn into_string(self) -> String {
+        [self.amount.to_string(), self.address.to_string()].join("")
+    }
+}
+
 pub struct TokenType {
 
 }

@@ -92,8 +92,8 @@ fn initiate_agreement(
         .add_attribute("id", id.to_string())
         .add_attribute("initiator", info.sender.clone())
         .add_attribute("counterparty", counterparty.clone())
-        .add_attribute("initiator_token", format!("{:?}", initiator_token))
-        .add_attribute("counterparty_token", format!("{:?}", counterparty_token)))
+        .add_attribute("initiator_token", initiator_token.into_string())
+        .add_attribute("counterparty_token", counterparty_token.into_string()))
 }
 
 /// Accepts an agreement by its ID, progressing its status to accepted.
@@ -128,8 +128,8 @@ fn accept_agreement(
         .add_attribute("id", id.to_string())
         .add_attribute("initiator", agreement.initiator)
         .add_attribute("counterparty", agreement.counterparty)
-        .add_attribute("initiator_token", format!("{:?}", agreement.initiator_token))
-        .add_attribute("counterparty_token", format!("{:?}", agreement.counterparty_token)))
+        .add_attribute("initiator_token", agreement.initiator_token.into_string())
+        .add_attribute("counterparty_token", agreement.counterparty_token.into_string()))
 }
 
 /// Executes an accepted agreement, transferring tokens between parties.
@@ -179,8 +179,8 @@ fn execute_agreement(
         .add_attribute("id", id.to_string())
         .add_attribute("initiator", agreement.initiator)
         .add_attribute("counterparty", agreement.counterparty)
-        .add_attribute("initiator_token", format!("{:?}", agreement.initiator_token))
-        .add_attribute("counterparty_token", format!("{:?}", agreement.counterparty_token)))
+        .add_attribute("initiator_token", agreement.initiator_token.into_string())
+        .add_attribute("counterparty_token", agreement.counterparty_token.into_string()))
 }
 
 /// Cancels an initiated or accepted agreement, refunding tokens if necessary.
@@ -238,8 +238,8 @@ fn cancel_agreement(
         .add_attribute("id", id.to_string())
         .add_attribute("initiator", agreement.initiator)
         .add_attribute("counterparty", agreement.counterparty)
-        .add_attribute("initiator_token", format!("{:?}", agreement.initiator_token))
-        .add_attribute("counterparty_token", format!("{:?}", agreement.counterparty_token)))
+        .add_attribute("initiator_token", agreement.initiator_token.into_string())
+        .add_attribute("counterparty_token", agreement.counterparty_token.into_string()))
 }
 
 /// Handles incoming queries to retrieve agreement information.
