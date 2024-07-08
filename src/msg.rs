@@ -7,6 +7,7 @@ use crate::state::Agreement;
 pub struct InstantiateMsg {}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
     InitiateAgreement {
         initiator_token: TokenInfo,
@@ -25,6 +26,7 @@ pub enum ExecuteMsg {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     GetAgreement { id: u64 },
     GetAgreementsByInitiator { initiator: Addr },
