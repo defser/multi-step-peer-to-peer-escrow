@@ -1,6 +1,6 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, to_json_binary};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, to_json_binary, Uint128};
 use cw2::set_contract_version;
 
 use crate::error::ContractError;
@@ -47,6 +47,11 @@ fn try_initiate_agreement(
     token_b: TokenInfo,
     counterparty: Addr,
 ) -> Result<Response, ContractError> {
+    let sent_funds = info.funds.iter().find(|c| c.denom == token_a.address.to_string());
+    if sent_funds.is_none() || sent_funds.unwrap().amount != Uint128::from(token_a.amount) {
+        return Err(ContractError::InsufficientFunds {});
+    }
+
     let id = AGREEMENT_COUNT.update(deps.storage, |count| -> StdResult<_> { Ok(count + 1) })?;
 
     let agreement = Agreement {
@@ -209,18 +214,18 @@ mod tests {
         let info = message_info(&Addr::unchecked("creator"), &coins(1000, "earth"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
-        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 100u128 };
-        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 200u128 };
+        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
+        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 2000u128 };
         let counterparty = Addr::unchecked("counterparty");
 
         let msg = ExecuteMsg::InitiateAgreement { token_a: token_a.clone(), token_b: token_b.clone(), counterparty: counterparty.clone() };
-        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "earth"));
+        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "tokenA"));
         let res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
 
         assert_eq!(res.attributes, vec![("method", "initiate_agreement"), ("id", "1")]);
 
         let msg = ExecuteMsg::AcceptAgreement { id: 1 };
-        let info = message_info(&Addr::unchecked("counterparty"), &coins(1000, "earth"));
+        let info = message_info(&Addr::unchecked("counterparty"), &coins(2000, "tokenB"));
         let res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         assert_eq!(res.attributes, vec![("method", "accept_agreement"), ("id", "1")]);
@@ -243,12 +248,12 @@ mod tests {
         let info = message_info(&Addr::unchecked("creator"), &coins(1000, "earth"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
-        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 100u128 };
-        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 200u128 };
+        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
+        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 2000u128 };
         let counterparty = Addr::unchecked("counterparty");
 
         let msg = ExecuteMsg::InitiateAgreement { token_a: token_a.clone(), token_b: token_b.clone(), counterparty: counterparty.clone() };
-        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "earth"));
+        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "tokenA"));
         let res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
 
         assert_eq!(res.attributes, vec![("method", "initiate_agreement"), ("id", "1")]);
@@ -270,12 +275,12 @@ mod tests {
         let info = message_info(&Addr::unchecked("creator"), &coins(1000, "earth"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
-        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 100u128 };
-        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 200u128 };
+        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
+        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 2000u128 };
         let counterparty = Addr::unchecked("counterparty");
 
         let msg = ExecuteMsg::InitiateAgreement { token_a: token_a.clone(), token_b: token_b.clone(), counterparty: counterparty.clone() };
-        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "earth"));
+        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "tokenA"));
         let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
 
         let msg = ExecuteMsg::InitiateAgreement { token_a: token_a.clone(), token_b: token_b.clone(), counterparty: Addr::unchecked("counterparty2") };
@@ -294,11 +299,11 @@ mod tests {
         let info = message_info(&Addr::unchecked("creator"), &coins(1000, "earth"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
-        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 100u128 };
-        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 200u128 };
+        let token_a = TokenInfo { address: Addr::unchecked("tokenA"), amount: 1000u128 };
+        let token_b = TokenInfo { address: Addr::unchecked("tokenB"), amount: 2000u128 };
 
         let msg = ExecuteMsg::InitiateAgreement { token_a: token_a.clone(), token_b: token_b.clone(), counterparty: Addr::unchecked("counterparty") };
-        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "earth"));
+        let info = message_info(&Addr::unchecked("initiator"), &coins(1000, "tokenA"));
         let _res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
 
         let msg = ExecuteMsg::InitiateAgreement { token_a: token_a.clone(), token_b: token_b.clone(), counterparty: Addr::unchecked("counterparty2") };

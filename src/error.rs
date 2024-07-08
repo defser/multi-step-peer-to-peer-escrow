@@ -9,6 +9,9 @@ pub enum ContractError {
     #[error("Unauthorized")]
     Unauthorized {},
 
+    #[error("Insufficient funds sent")]
+    InsufficientFunds {},
+
     #[error("Invalid Agreement Status")]
     InvalidAgreementStatus {},
 }
