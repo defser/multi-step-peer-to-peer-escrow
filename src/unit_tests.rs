@@ -43,6 +43,7 @@ mod tests {
         assert_eq!(res.attributes, vec![
             Attribute { key: "method".to_string(), value: "accept_agreement".to_string() },
             Attribute { key: "id".to_string(), value: "1".to_string() },
+            Attribute { key: "status".to_string(), value: STATUS_ACCEPTED.to_string() },
             Attribute { key: "initiator".to_string(), value: "initiator".to_string() },
             Attribute { key: "counterparty".to_string(), value: "counterparty".to_string() },
             Attribute { key: "initiator_token".to_string(), value: "1000tokenA".to_string() },
@@ -264,6 +265,16 @@ mod tests {
         let execute_info = message_info(&Addr::unchecked("initiator"), &[]);
         let res = execute(deps.as_mut(), mock_env(), execute_info.clone(), execute_msg).unwrap();
 
+        assert_eq!(res.attributes, vec![
+            Attribute { key: "method".to_string(), value: "execute_agreement".to_string() },
+            Attribute { key: "id".to_string(), value: "1".to_string() },
+            Attribute { key: "status".to_string(), value: STATUS_EXECUTED.to_string() },
+            Attribute { key: "initiator".to_string(), value: "initiator".to_string() },
+            Attribute { key: "counterparty".to_string(), value: "counterparty".to_string() },
+            Attribute { key: "initiator_token".to_string(), value: "1000tokenA".to_string() },
+            Attribute { key: "counterparty_token".to_string(), value: "2000tokenB".to_string() }
+        ]);
+
         // Check the response
         assert_eq!(res.messages.len(), 2);
 
@@ -327,6 +338,7 @@ mod tests {
         assert_eq!(res.attributes, vec![
             Attribute { key: "method".to_string(), value: "cancel_agreement".to_string() },
             Attribute { key: "id".to_string(), value: "1".to_string() },
+            Attribute { key: "status".to_string(), value: STATUS_CANCELED.to_string() },
             Attribute { key: "initiator".to_string(), value: "initiator".to_string() },
             Attribute { key: "counterparty".to_string(), value: "counterparty".to_string() },
             Attribute { key: "initiator_token".to_string(), value: "1000tokenA".to_string() },
@@ -362,6 +374,7 @@ mod tests {
         assert_eq!(res.attributes, vec![
             Attribute { key: "method".to_string(), value: "cancel_agreement".to_string() },
             Attribute { key: "id".to_string(), value: "1".to_string() },
+            Attribute { key: "status".to_string(), value: STATUS_CANCELED.to_string() },
             Attribute { key: "initiator".to_string(), value: "initiator".to_string() },
             Attribute { key: "counterparty".to_string(), value: "counterparty".to_string() },
             Attribute { key: "initiator_token".to_string(), value: "1000tokenA".to_string() },

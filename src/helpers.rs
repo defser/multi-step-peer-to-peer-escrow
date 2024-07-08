@@ -12,6 +12,8 @@ use cosmwasm_std::testing::{message_info, mock_dependencies_with_balances, mock_
 #[cfg(test)]
 use crate::contract::{execute, instantiate, query};
 #[cfg(test)]
+use crate::contract::STATUS_INITIATED;
+#[cfg(test)]
 use crate::msg::{AcceptedAgreementCountResponse, CanceledAgreementCountResponse, ExecutedAgreementCountResponse, ExecuteMsg, InitiatedAgreementCountResponse, InstantiateMsg, QueryMsg, TokenInfo, TotalAgreementCountResponse};
 
 
@@ -101,6 +103,7 @@ pub fn initiate_new_agreement(deps: &mut OwnedDeps<MockStorage, MockApi, MockQue
     assert_eq!(res.attributes, vec![
         Attribute { key: "method".to_string(), value: "initiate_agreement".to_string() },
         Attribute { key: "id".to_string(), value: "1".to_string() },
+        Attribute { key: "status".to_string(), value: STATUS_INITIATED.to_string() },
         Attribute { key: "initiator".to_string(), value: initiator.to_string() },
         Attribute { key: "counterparty".to_string(), value: counterparty.to_string() },
         Attribute { key: "initiator_token".to_string(), value: initiator_token.clone().into_string() },
