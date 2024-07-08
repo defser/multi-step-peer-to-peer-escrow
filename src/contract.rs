@@ -8,7 +8,7 @@ use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
 use crate::state::{Agreement, AGREEMENTS, AGREEMENT_COUNT, query_agreement, query_agreements_by_initiator, query_agreements_by_counterparty};
 use crate::utils::{assert_agreement_has_status, assert_contract_has_sufficient_funds, assert_funds_match_token_amount, assert_sender_authorized, assert_sender_match_counterparty};
 
-const CONTRACT_NAME: &str = "crates.io:simple-token-agreement";
+const CONTRACT_NAME: &str = "crates.io:native-token-exchange-escrow";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const INITIATED: &str = "initiated";

@@ -1,5 +1,5 @@
 [package]
-name = "simple-token-agreement"
+name = "native-token-exchange-escrow"
 version = "0.0.1"
 authors = ["0xDEFSER <info@defser.nl>"]
 edition = "2021"
