@@ -1,9 +1,11 @@
-use std::env;
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
+use multi_step_peer_to_peer_escrow::msg::{
+    AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo,
+};
+use multi_step_peer_to_peer_escrow::state::Agreement;
+use std::env;
 use std::env::current_dir;
 use std::fs::create_dir_all;
-use multi_step_peer_to_peer_escrow::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
-use multi_step_peer_to_peer_escrow::state::Agreement;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");

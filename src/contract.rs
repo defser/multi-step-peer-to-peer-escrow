@@ -1,12 +1,25 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, BankMsg, coin, to_json_binary};
+use cosmwasm_std::{
+    coin, to_json_binary, Addr, BankMsg, Binary, Deps, DepsMut, Env, MessageInfo, Response,
+    StdResult,
+};
 use cw2::set_contract_version;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
-use crate::state::{Agreement, AGREEMENTS, TOTAL_AGREEMENT_COUNT, query_agreement, query_agreements_by_initiator, query_agreements_by_counterparty, query_agreements_by_status, query_total_agreement_count, INITIATED_AGREEMENT_COUNT, ACCEPTED_AGREEMENT_COUNT, EXECUTED_AGREEMENT_COUNT, CANCELED_AGREEMENT_COUNT, query_initiated_agreement_count, query_accepted_agreement_count, query_executed_agreement_count, query_canceled_agreement_count};
-use crate::utils::{assert_agreement_has_status, assert_contract_has_sufficient_funds, assert_funds_match_token_amount, assert_sender_authorized, assert_sender_is_different_from_counterparty, assert_sender_matches_counterparty};
+use crate::state::{
+    query_accepted_agreement_count, query_agreement, query_agreements_by_counterparty,
+    query_agreements_by_initiator, query_agreements_by_status, query_canceled_agreement_count,
+    query_executed_agreement_count, query_initiated_agreement_count, query_total_agreement_count,
+    Agreement, ACCEPTED_AGREEMENT_COUNT, AGREEMENTS, CANCELED_AGREEMENT_COUNT,
+    EXECUTED_AGREEMENT_COUNT, INITIATED_AGREEMENT_COUNT, TOTAL_AGREEMENT_COUNT,
+};
+use crate::utils::{
+    assert_agreement_has_status, assert_contract_has_sufficient_funds,
+    assert_funds_match_token_amount, assert_sender_authorized,
+    assert_sender_is_different_from_counterparty, assert_sender_matches_counterparty,
+};
 
 const CONTRACT_NAME: &str = "crates.io:multi-step-peer-to-peer-escrow";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -48,9 +61,17 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::InitiateAgreement { initiator_token, counterparty_token, counterparty } => {
-            initiate_agreement(deps, info, initiator_token, counterparty_token, counterparty)
-        }
+        ExecuteMsg::InitiateAgreement {
+            initiator_token,
+            counterparty_token,
+            counterparty,
+        } => initiate_agreement(
+            deps,
+            info,
+            initiator_token,
+            counterparty_token,
+            counterparty,
+        ),
         ExecuteMsg::AcceptAgreement { id } => accept_agreement(deps, info, id),
         ExecuteMsg::ExecuteAgreement { id } => execute_agreement(deps, env, info, id),
         ExecuteMsg::CancelAgreement { id } => cancel_agreement(deps, env, info, id),
@@ -72,7 +93,8 @@ fn initiate_agreement(
     assert_sender_is_different_from_counterparty(&info.sender, &counterparty)?;
 
     // Generate new agreement ID and update agreement status counts
-    let id = TOTAL_AGREEMENT_COUNT.update(deps.storage, |count| -> StdResult<_> { Ok(count + 1) })?;
+    let id =
+        TOTAL_AGREEMENT_COUNT.update(deps.storage, |count| -> StdResult<_> { Ok(count + 1) })?;
     INITIATED_AGREEMENT_COUNT.update(deps.storage, |count| -> StdResult<_> { Ok(count + 1) })?;
 
     // Create agreement struct and save to storage
@@ -98,11 +120,7 @@ fn initiate_agreement(
 }
 
 /// Accepts an agreement by its ID, progressing its status to accepted.
-fn accept_agreement(
-    deps: DepsMut,
-    info: MessageInfo,
-    id: u64,
-) -> Result<Response, ContractError> {
+fn accept_agreement(deps: DepsMut, info: MessageInfo, id: u64) -> Result<Response, ContractError> {
     // Load agreement from storage by ID
     let mut agreement = AGREEMENTS.load(deps.storage, id)?;
 
@@ -131,7 +149,10 @@ fn accept_agreement(
         .add_attribute("initiator", agreement.initiator)
         .add_attribute("counterparty", agreement.counterparty)
         .add_attribute("initiator_token", agreement.initiator_token.into_string())
-        .add_attribute("counterparty_token", agreement.counterparty_token.into_string()))
+        .add_attribute(
+            "counterparty_token",
+            agreement.counterparty_token.into_string(),
+        ))
 }
 
 /// Executes an accepted agreement, transferring tokens between parties.
@@ -145,7 +166,10 @@ fn execute_agreement(
     let mut agreement = AGREEMENTS.load(deps.storage, id)?;
 
     // Verify sender is authorized (either initiator or counterparty)
-    assert_sender_authorized(&info.sender, &[&agreement.initiator, &agreement.counterparty])?;
+    assert_sender_authorized(
+        &info.sender,
+        &[&agreement.initiator, &agreement.counterparty],
+    )?;
 
     // Assert agreement status is ACCEPTED before execution
     assert_agreement_has_status(&agreement.status, &[STATUS_ACCEPTED])?;
@@ -162,11 +186,17 @@ fn execute_agreement(
     let messages = vec![
         BankMsg::Send {
             to_address: agreement.counterparty.to_string(),
-            amount: vec![coin(agreement.initiator_token.amount, &agreement.initiator_token.address)],
+            amount: vec![coin(
+                agreement.initiator_token.amount,
+                &agreement.initiator_token.address,
+            )],
         },
         BankMsg::Send {
             to_address: agreement.initiator.to_string(),
-            amount: vec![coin(agreement.counterparty_token.amount, &agreement.counterparty_token.address)],
+            amount: vec![coin(
+                agreement.counterparty_token.amount,
+                &agreement.counterparty_token.address,
+            )],
         },
     ];
 
@@ -183,7 +213,10 @@ fn execute_agreement(
         .add_attribute("initiator", agreement.initiator)
         .add_attribute("counterparty", agreement.counterparty)
         .add_attribute("initiator_token", agreement.initiator_token.into_string())
-        .add_attribute("counterparty_token", agreement.counterparty_token.into_string()))
+        .add_attribute(
+            "counterparty_token",
+            agreement.counterparty_token.into_string(),
+        ))
 }
 
 /// Cancels an initiated or accepted agreement, refunding tokens if necessary.
@@ -197,14 +230,18 @@ fn cancel_agreement(
     let mut agreement = AGREEMENTS.load(deps.storage, id)?;
 
     // Verify sender is authorized (either initiator or counterparty)
-    assert_sender_authorized(&info.sender, &[&agreement.initiator, &agreement.counterparty])?;
+    assert_sender_authorized(
+        &info.sender,
+        &[&agreement.initiator, &agreement.counterparty],
+    )?;
 
     // Assert agreement status is INITIATED or ACCEPTED before cancellation
     assert_agreement_has_status(&agreement.status, &[STATUS_INITIATED, STATUS_ACCEPTED])?;
 
     // Update agreement status counts based on agreement status
     if agreement.status == STATUS_INITIATED {
-        INITIATED_AGREEMENT_COUNT.update(deps.storage, |count| -> StdResult<_> { Ok(count - 1) })?;
+        INITIATED_AGREEMENT_COUNT
+            .update(deps.storage, |count| -> StdResult<_> { Ok(count - 1) })?;
     }
     if agreement.status == STATUS_ACCEPTED {
         ACCEPTED_AGREEMENT_COUNT.update(deps.storage, |count| -> StdResult<_> { Ok(count - 1) })?;
@@ -218,7 +255,10 @@ fn cancel_agreement(
     if assert_contract_has_sufficient_funds(&deps, &env, &agreement.initiator_token).is_ok() {
         messages.push(BankMsg::Send {
             to_address: agreement.initiator.to_string(),
-            amount: vec![coin(agreement.initiator_token.amount, &agreement.initiator_token.address)],
+            amount: vec![coin(
+                agreement.initiator_token.amount,
+                &agreement.initiator_token.address,
+            )],
         });
     }
 
@@ -226,7 +266,10 @@ fn cancel_agreement(
     if assert_contract_has_sufficient_funds(&deps, &env, &agreement.counterparty_token).is_ok() {
         messages.push(BankMsg::Send {
             to_address: agreement.counterparty.to_string(),
-            amount: vec![coin(agreement.counterparty_token.amount, &agreement.counterparty_token.address)],
+            amount: vec![coin(
+                agreement.counterparty_token.amount,
+                &agreement.counterparty_token.address,
+            )],
         });
     }
 
@@ -243,7 +286,10 @@ fn cancel_agreement(
         .add_attribute("initiator", agreement.initiator)
         .add_attribute("counterparty", agreement.counterparty)
         .add_attribute("initiator_token", agreement.initiator_token.into_string())
-        .add_attribute("counterparty_token", agreement.counterparty_token.into_string()))
+        .add_attribute(
+            "counterparty_token",
+            agreement.counterparty_token.into_string(),
+        ))
 }
 
 /// Handles incoming queries to retrieve agreement information.
@@ -252,27 +298,62 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::GetAgreement { id } => to_json_binary(&query_agreement(deps, id)?),
         QueryMsg::GetTotalAgreementCount {} => to_json_binary(&query_total_agreement_count(deps)?),
-        QueryMsg::GetInitiatedAgreementCount {} => to_json_binary(&query_initiated_agreement_count(deps)?),
-        QueryMsg::GetAcceptedAgreementCount {} => to_json_binary(&query_accepted_agreement_count(deps)?),
-        QueryMsg::GetExecutedAgreementCount {} => to_json_binary(&query_executed_agreement_count(deps)?),
-        QueryMsg::GetCanceledAgreementCount {} => to_json_binary(&query_canceled_agreement_count(deps)?),
-        QueryMsg::GetAgreementsByInitiator { initiator, page, page_size } => {
-            let start_after = page.checked_mul(page_size).unwrap_or(0);
-            let end_before = start_after.checked_add(page_size).unwrap_or(u64::MAX);
-
-            to_json_binary(&query_agreements_by_initiator(deps, initiator, start_after, end_before)?)
-        },
-        QueryMsg::GetAgreementsByCounterparty { counterparty, page, page_size } => {
-            let start_after = page.checked_mul(page_size).unwrap_or(0);
-            let end_before = start_after.checked_add(page_size).unwrap_or(u64::MAX);
-
-            to_json_binary(&query_agreements_by_counterparty(deps, counterparty, start_after, end_before)?)
+        QueryMsg::GetInitiatedAgreementCount {} => {
+            to_json_binary(&query_initiated_agreement_count(deps)?)
         }
-        QueryMsg::GetAgreementsByStatus { status, page, page_size } => {
+        QueryMsg::GetAcceptedAgreementCount {} => {
+            to_json_binary(&query_accepted_agreement_count(deps)?)
+        }
+        QueryMsg::GetExecutedAgreementCount {} => {
+            to_json_binary(&query_executed_agreement_count(deps)?)
+        }
+        QueryMsg::GetCanceledAgreementCount {} => {
+            to_json_binary(&query_canceled_agreement_count(deps)?)
+        }
+        QueryMsg::GetAgreementsByInitiator {
+            initiator,
+            page,
+            page_size,
+        } => {
             let start_after = page.checked_mul(page_size).unwrap_or(0);
             let end_before = start_after.checked_add(page_size).unwrap_or(u64::MAX);
 
-            to_json_binary(&query_agreements_by_status(deps, status, start_after, end_before)?)
-        },
+            to_json_binary(&query_agreements_by_initiator(
+                deps,
+                initiator,
+                start_after,
+                end_before,
+            )?)
+        }
+        QueryMsg::GetAgreementsByCounterparty {
+            counterparty,
+            page,
+            page_size,
+        } => {
+            let start_after = page.checked_mul(page_size).unwrap_or(0);
+            let end_before = start_after.checked_add(page_size).unwrap_or(u64::MAX);
+
+            to_json_binary(&query_agreements_by_counterparty(
+                deps,
+                counterparty,
+                start_after,
+                end_before,
+            )?)
+        }
+        QueryMsg::GetAgreementsByStatus {
+            status,
+            page,
+            page_size,
+        } => {
+            let start_after = page.checked_mul(page_size).unwrap_or(0);
+            let end_before = start_after.checked_add(page_size).unwrap_or(u64::MAX);
+
+            to_json_binary(&query_agreements_by_status(
+                deps,
+                status,
+                start_after,
+                end_before,
+            )?)
+        }
     }
 }

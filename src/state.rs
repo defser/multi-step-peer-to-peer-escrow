@@ -1,4 +1,8 @@
-use crate::msg::{TotalAgreementCountResponse, AgreementResponse, AgreementsResponse, TokenInfo, InitiatedAgreementCountResponse, AcceptedAgreementCountResponse, ExecutedAgreementCountResponse, CanceledAgreementCountResponse};
+use crate::msg::{
+    AcceptedAgreementCountResponse, AgreementResponse, AgreementsResponse,
+    CanceledAgreementCountResponse, ExecutedAgreementCountResponse,
+    InitiatedAgreementCountResponse, TokenInfo, TotalAgreementCountResponse,
+};
 use cosmwasm_std::{Addr, Deps, Order, StdResult};
 use cw_storage_plus::{Bounder, Item, Map};
 use schemars::JsonSchema;
@@ -33,31 +37,41 @@ pub fn query_agreement(deps: Deps, id: u64) -> StdResult<AgreementResponse> {
 /// Queries total agreement count.
 pub fn query_total_agreement_count(deps: Deps) -> StdResult<TotalAgreementCountResponse> {
     let total_agreement_count = TOTAL_AGREEMENT_COUNT.load(deps.storage)?;
-    Ok(TotalAgreementCountResponse { total_agreement_count })
+    Ok(TotalAgreementCountResponse {
+        total_agreement_count,
+    })
 }
 
 /// Queries initiated agreement count.
 pub fn query_initiated_agreement_count(deps: Deps) -> StdResult<InitiatedAgreementCountResponse> {
     let initiated_agreement_count = INITIATED_AGREEMENT_COUNT.load(deps.storage)?;
-    Ok(InitiatedAgreementCountResponse { initiated_agreement_count })
+    Ok(InitiatedAgreementCountResponse {
+        initiated_agreement_count,
+    })
 }
 
 /// Queries accepted agreement count.
 pub fn query_accepted_agreement_count(deps: Deps) -> StdResult<AcceptedAgreementCountResponse> {
     let accepted_agreement_count = ACCEPTED_AGREEMENT_COUNT.load(deps.storage)?;
-    Ok(AcceptedAgreementCountResponse { accepted_agreement_count })
+    Ok(AcceptedAgreementCountResponse {
+        accepted_agreement_count,
+    })
 }
 
 /// Queries executed agreement count.
 pub fn query_executed_agreement_count(deps: Deps) -> StdResult<ExecutedAgreementCountResponse> {
     let executed_agreement_count = EXECUTED_AGREEMENT_COUNT.load(deps.storage)?;
-    Ok(ExecutedAgreementCountResponse { executed_agreement_count })
+    Ok(ExecutedAgreementCountResponse {
+        executed_agreement_count,
+    })
 }
 
 /// Queries canceled agreement count.
 pub fn query_canceled_agreement_count(deps: Deps) -> StdResult<CanceledAgreementCountResponse> {
     let canceled_agreement_count = CANCELED_AGREEMENT_COUNT.load(deps.storage)?;
-    Ok(CanceledAgreementCountResponse { canceled_agreement_count })
+    Ok(CanceledAgreementCountResponse {
+        canceled_agreement_count,
+    })
 }
 
 /// Queries agreements initiated by a specific address within a given range.
@@ -68,7 +82,12 @@ pub fn query_agreements_by_initiator(
     end_before: u64,
 ) -> StdResult<AgreementsResponse> {
     let agreements: Vec<Agreement> = AGREEMENTS
-        .range(deps.storage, start_after.inclusive_bound(), end_before.inclusive_bound(), Order::Ascending)
+        .range(
+            deps.storage,
+            start_after.inclusive_bound(),
+            end_before.inclusive_bound(),
+            Order::Ascending,
+        )
         .filter_map(|item| match item {
             Ok((_, agreement)) if agreement.initiator == initiator => Some(agreement),
             _ => None,
@@ -86,7 +105,12 @@ pub fn query_agreements_by_counterparty(
     end_before: u64,
 ) -> StdResult<AgreementsResponse> {
     let agreements: Vec<Agreement> = AGREEMENTS
-        .range(deps.storage, start_after.inclusive_bound(), end_before.inclusive_bound(), Order::Ascending)
+        .range(
+            deps.storage,
+            start_after.inclusive_bound(),
+            end_before.inclusive_bound(),
+            Order::Ascending,
+        )
         .filter_map(|item| match item {
             Ok((_, agreement)) if agreement.counterparty == counterparty => Some(agreement),
             _ => None,
@@ -104,7 +128,12 @@ pub fn query_agreements_by_status(
     end_before: u64,
 ) -> StdResult<AgreementsResponse> {
     let agreements: Vec<Agreement> = AGREEMENTS
-        .range(deps.storage, start_after.inclusive_bound(), end_before.inclusive_bound(), Order::Ascending)
+        .range(
+            deps.storage,
+            start_after.inclusive_bound(),
+            end_before.inclusive_bound(),
+            Order::Ascending,
+        )
         .filter_map(|item| match item {
             Ok((_, agreement)) if agreement.status == status => Some(agreement),
             _ => None,

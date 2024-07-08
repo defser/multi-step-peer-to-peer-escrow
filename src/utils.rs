@@ -1,15 +1,18 @@
-use cosmwasm_std::{Addr, Coin, DepsMut, Env, Uint128};
-use crate::ContractError;
 use crate::msg::TokenInfo;
+use crate::ContractError;
+use cosmwasm_std::{Addr, Coin, DepsMut, Env, Uint128};
 
 // Asserts that the sender matches the expected counterparty address.
-pub fn assert_sender_matches_counterparty(sender: &Addr, counterparty: &Addr) -> Result<(), ContractError> {
+pub fn assert_sender_matches_counterparty(
+    sender: &Addr,
+    counterparty: &Addr,
+) -> Result<(), ContractError> {
     // Check if the sender address matches the counterparty address
     if sender != counterparty {
         // If not, return an Unauthorized error indicating the expected and found addresses
         return Err(ContractError::Unauthorized {
             expected: counterparty.to_string(),
-            found: sender.to_string()
+            found: sender.to_string(),
         });
     }
 
@@ -18,13 +21,16 @@ pub fn assert_sender_matches_counterparty(sender: &Addr, counterparty: &Addr) ->
 }
 
 // Asserts that the sender is different from the counterparty address.
-pub fn assert_sender_is_different_from_counterparty(sender: &Addr, counterparty: &Addr) -> Result<(), ContractError> {
+pub fn assert_sender_is_different_from_counterparty(
+    sender: &Addr,
+    counterparty: &Addr,
+) -> Result<(), ContractError> {
     // Check if the sender address is the same as the counterparty address
     if sender == counterparty {
         // If they are the same, return an InvalidCounterparty error indicating the addresses
         return Err(ContractError::InvalidCounterparty {
             initiator: sender.to_string(),
-            counterparty: counterparty.to_string()
+            counterparty: counterparty.to_string(),
         });
     }
 
@@ -33,12 +39,19 @@ pub fn assert_sender_is_different_from_counterparty(sender: &Addr, counterparty:
 }
 
 // Asserts that the sender is in the list of authorized senders.
-pub fn assert_sender_authorized(sender: &Addr, authorized_senders: &[&Addr]) -> Result<(), ContractError> {
+pub fn assert_sender_authorized(
+    sender: &Addr,
+    authorized_senders: &[&Addr],
+) -> Result<(), ContractError> {
     // Check if the sender address is in the list of authorized senders
     if !authorized_senders.contains(&sender) {
         // If not, return an Unauthorized error indicating expected and found addresses
         return Err(ContractError::Unauthorized {
-            expected: authorized_senders.iter().map(|addr| addr.to_string()).collect::<Vec<_>>().join(" or "),
+            expected: authorized_senders
+                .iter()
+                .map(|addr| addr.to_string())
+                .collect::<Vec<_>>()
+                .join(" or "),
             found: sender.to_string(),
         });
     }
@@ -48,7 +61,10 @@ pub fn assert_sender_authorized(sender: &Addr, authorized_senders: &[&Addr]) -> 
 }
 
 // Asserts that the agreement status matches one of the allowed statuses.
-pub fn assert_agreement_has_status(agreement_status: &str, allowed_statuses: &[&str]) -> Result<(), ContractError> {
+pub fn assert_agreement_has_status(
+    agreement_status: &str,
+    allowed_statuses: &[&str],
+) -> Result<(), ContractError> {
     // Check if the agreement status is in the list of allowed statuses
     if !allowed_statuses.contains(&agreement_status) {
         // If not, return an InvalidAgreementStatus error indicating expected and found statuses
@@ -62,9 +78,11 @@ pub fn assert_agreement_has_status(agreement_status: &str, allowed_statuses: &[&
     Ok(())
 }
 
-
 // Asserts that the funds match the expected token amount.
-pub fn assert_funds_match_token_amount(funds: &Vec<Coin>, token: &TokenInfo) -> Result<(), ContractError> {
+pub fn assert_funds_match_token_amount(
+    funds: &Vec<Coin>,
+    token: &TokenInfo,
+) -> Result<(), ContractError> {
     // Convert token amount from u128 to Uint128 for consistency
     let token_amount = Uint128::from(token.amount);
 
@@ -81,12 +99,15 @@ pub fn assert_funds_match_token_amount(funds: &Vec<Coin>, token: &TokenInfo) -> 
     }
 
     // Find the specific coin that matches the token's address
-    let sent_funds = funds.iter().find(|coin| coin.denom == token.address.to_string());
+    let sent_funds = funds
+        .iter()
+        .find(|coin| coin.denom == token.address.to_string());
 
     // Match against the found coin
     match sent_funds {
         Some(coin) if coin.amount == token_amount => Ok(()), // If amount matches, return Ok
-        Some(coin) => Err(ContractError::IncorrectFundsAmount { // If amount doesn't match, return error
+        Some(coin) => Err(ContractError::IncorrectFundsAmount {
+            // If amount doesn't match, return error
             expected: token_amount.to_string(),
             found: coin.amount.to_string(),
         }),
@@ -94,9 +115,12 @@ pub fn assert_funds_match_token_amount(funds: &Vec<Coin>, token: &TokenInfo) -> 
     }
 }
 
-
 // Asserts that the contract has sufficient funds of a specific token.
-pub fn assert_contract_has_sufficient_funds(deps: &DepsMut, env: &Env, token_info: &TokenInfo) -> Result<(), ContractError> {
+pub fn assert_contract_has_sufficient_funds(
+    deps: &DepsMut,
+    env: &Env,
+    token_info: &TokenInfo,
+) -> Result<(), ContractError> {
     // Clone the contract address from the environment
     let contract_addr = env.contract.address.clone();
 

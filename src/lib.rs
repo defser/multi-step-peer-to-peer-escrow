@@ -1,10 +1,10 @@
 pub mod contract;
 mod error;
-pub mod utils;
+mod helpers;
+mod integration_tests;
 pub mod msg;
 pub mod state;
-mod integration_tests;
 mod unit_tests;
-mod helpers;
+pub mod utils;
 
 pub use crate::error::ContractError;

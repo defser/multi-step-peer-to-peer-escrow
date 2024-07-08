@@ -24,7 +24,7 @@ mod tests {
         let mut app = App::default();
         let cw_template_id = app.store_code(contract_template());
 
-        let msg = InstantiateMsg { };
+        let msg = InstantiateMsg {};
         let cw_template_contract_addr = app
             .instantiate_contract(
                 cw_template_id,
@@ -42,9 +42,9 @@ mod tests {
     }
 
     mod agreement_tests {
-        use cosmwasm_std::coins;
         use super::*;
         use crate::msg::{ExecuteMsg, TokenInfo};
+        use cosmwasm_std::coins;
 
         #[test]
         fn initiate_agreement() {
@@ -69,22 +69,37 @@ mod tests {
             });
 
             let msg = ExecuteMsg::InitiateAgreement {
-                initiator_token: TokenInfo { address: Addr::unchecked(TOKEN_A), amount: 1000u128 },
-                counterparty_token: TokenInfo { address: Addr::unchecked(TOKEN_B), amount: 2000u128 },
+                initiator_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_A),
+                    amount: 1000u128,
+                },
+                counterparty_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_B),
+                    amount: 2000u128,
+                },
                 counterparty: counterparty_addr.clone(),
             };
 
-            let cosmos_msg = cw_template_contract.call(
-                msg,
-                coins(1000, TOKEN_A)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(msg, coins(1000, TOKEN_A))
+                .unwrap();
 
             app.execute(initiator_addr.clone(), cosmos_msg).unwrap();
 
-            let initiator_token_a_balance = app.wrap().query_balance(initiator_addr.clone(), TOKEN_A).unwrap().amount.u128();
+            let initiator_token_a_balance = app
+                .wrap()
+                .query_balance(initiator_addr.clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(initiator_token_a_balance, 9000);
 
-            let contract_token_a_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_A).unwrap().amount.u128();
+            let contract_token_a_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_a_balance, 1000);
         }
 
@@ -111,37 +126,61 @@ mod tests {
             });
 
             let initiate_msg = ExecuteMsg::InitiateAgreement {
-                initiator_token: TokenInfo { address: Addr::unchecked(TOKEN_A), amount: 1000u128 },
-                counterparty_token: TokenInfo { address: Addr::unchecked(TOKEN_B), amount: 2000u128 },
+                initiator_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_A),
+                    amount: 1000u128,
+                },
+                counterparty_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_B),
+                    amount: 2000u128,
+                },
                 counterparty: counterparty_addr.clone(),
             };
 
-            let cosmos_msg = cw_template_contract.call(
-                initiate_msg,
-                coins(1000, TOKEN_A)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(initiate_msg, coins(1000, TOKEN_A))
+                .unwrap();
 
             app.execute(initiator_addr.clone(), cosmos_msg).unwrap();
 
             let accept_msg = ExecuteMsg::AcceptAgreement { id: 1 };
 
-            let cosmos_msg = cw_template_contract.call(
-                accept_msg,
-                coins(2000, TOKEN_B)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(accept_msg, coins(2000, TOKEN_B))
+                .unwrap();
 
             app.execute(counterparty_addr.clone(), cosmos_msg).unwrap();
 
-            let initiator_token_a_balance = app.wrap().query_balance(initiator_addr.clone(), TOKEN_A).unwrap().amount.u128();
+            let initiator_token_a_balance = app
+                .wrap()
+                .query_balance(initiator_addr.clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(initiator_token_a_balance, 9000);
 
-            let counterparty_token_b_balance = app.wrap().query_balance(counterparty_addr.clone(), TOKEN_B).unwrap().amount.u128();
+            let counterparty_token_b_balance = app
+                .wrap()
+                .query_balance(counterparty_addr.clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(counterparty_token_b_balance, 8000);
 
-            let contract_token_a_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_A).unwrap().amount.u128();
+            let contract_token_a_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_a_balance, 1000);
 
-            let contract_token_b_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_B).unwrap().amount.u128();
+            let contract_token_b_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_b_balance, 2000);
         }
 
@@ -168,24 +207,28 @@ mod tests {
             });
 
             let initiate_msg = ExecuteMsg::InitiateAgreement {
-                initiator_token: TokenInfo { address: Addr::unchecked(TOKEN_A), amount: 1000u128 },
-                counterparty_token: TokenInfo { address: Addr::unchecked(TOKEN_B), amount: 2000u128 },
+                initiator_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_A),
+                    amount: 1000u128,
+                },
+                counterparty_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_B),
+                    amount: 2000u128,
+                },
                 counterparty: counterparty_addr.clone(),
             };
 
-            let cosmos_msg = cw_template_contract.call(
-                initiate_msg,
-                coins(1000, TOKEN_A)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(initiate_msg, coins(1000, TOKEN_A))
+                .unwrap();
 
             app.execute(initiator_addr.clone(), cosmos_msg).unwrap();
 
             let accept_msg = ExecuteMsg::AcceptAgreement { id: 1 };
 
-            let cosmos_msg = cw_template_contract.call(
-                accept_msg,
-                coins(2000, TOKEN_B)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(accept_msg, coins(2000, TOKEN_B))
+                .unwrap();
 
             app.execute(counterparty_addr.clone(), cosmos_msg).unwrap();
 
@@ -195,22 +238,52 @@ mod tests {
 
             app.execute(counterparty_addr.clone(), cosmos_msg).unwrap();
 
-            let initiator_token_a_balance = app.wrap().query_balance(initiator_addr.clone(), TOKEN_A).unwrap().amount.u128();
+            let initiator_token_a_balance = app
+                .wrap()
+                .query_balance(initiator_addr.clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(initiator_token_a_balance, 9000);
 
-            let initiator_token_b_balance = app.wrap().query_balance(initiator_addr.clone(), TOKEN_B).unwrap().amount.u128();
+            let initiator_token_b_balance = app
+                .wrap()
+                .query_balance(initiator_addr.clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(initiator_token_b_balance, 2000);
 
-            let counterparty_token_b_balance = app.wrap().query_balance(counterparty_addr.clone(), TOKEN_B).unwrap().amount.u128();
+            let counterparty_token_b_balance = app
+                .wrap()
+                .query_balance(counterparty_addr.clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(counterparty_token_b_balance, 8000);
 
-            let counterparty_token_a_balance = app.wrap().query_balance(counterparty_addr.clone(), TOKEN_A).unwrap().amount.u128();
+            let counterparty_token_a_balance = app
+                .wrap()
+                .query_balance(counterparty_addr.clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(counterparty_token_a_balance, 1000);
 
-            let contract_token_a_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_A).unwrap().amount.u128();
+            let contract_token_a_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_a_balance, 0);
 
-            let contract_token_b_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_B).unwrap().amount.u128();
+            let contract_token_b_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_b_balance, 0);
         }
 
@@ -237,24 +310,28 @@ mod tests {
             });
 
             let initiate_msg = ExecuteMsg::InitiateAgreement {
-                initiator_token: TokenInfo { address: Addr::unchecked(TOKEN_A), amount: 1000u128 },
-                counterparty_token: TokenInfo { address: Addr::unchecked(TOKEN_B), amount: 2000u128 },
+                initiator_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_A),
+                    amount: 1000u128,
+                },
+                counterparty_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_B),
+                    amount: 2000u128,
+                },
                 counterparty: counterparty_addr.clone(),
             };
 
-            let cosmos_msg = cw_template_contract.call(
-                initiate_msg,
-                coins(1000, TOKEN_A)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(initiate_msg, coins(1000, TOKEN_A))
+                .unwrap();
 
             app.execute(initiator_addr.clone(), cosmos_msg).unwrap();
 
             let accept_msg = ExecuteMsg::AcceptAgreement { id: 1 };
 
-            let cosmos_msg = cw_template_contract.call(
-                accept_msg,
-                coins(2000, TOKEN_B)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(accept_msg, coins(2000, TOKEN_B))
+                .unwrap();
 
             app.execute(counterparty_addr.clone(), cosmos_msg).unwrap();
 
@@ -264,16 +341,36 @@ mod tests {
 
             app.execute(counterparty_addr.clone(), cosmos_msg).unwrap();
 
-            let initiator_token_a_balance = app.wrap().query_balance(initiator_addr.clone(), TOKEN_A).unwrap().amount.u128();
+            let initiator_token_a_balance = app
+                .wrap()
+                .query_balance(initiator_addr.clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(initiator_token_a_balance, 10000);
 
-            let counterparty_token_b_balance = app.wrap().query_balance(counterparty_addr.clone(), TOKEN_B).unwrap().amount.u128();
+            let counterparty_token_b_balance = app
+                .wrap()
+                .query_balance(counterparty_addr.clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(counterparty_token_b_balance, 10000);
 
-            let contract_token_a_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_A).unwrap().amount.u128();
+            let contract_token_a_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_a_balance, 0);
 
-            let contract_token_b_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_B).unwrap().amount.u128();
+            let contract_token_b_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_b_balance, 0);
         }
 
@@ -300,15 +397,20 @@ mod tests {
             });
 
             let initiate_msg = ExecuteMsg::InitiateAgreement {
-                initiator_token: TokenInfo { address: Addr::unchecked(TOKEN_A), amount: 1000u128 },
-                counterparty_token: TokenInfo { address: Addr::unchecked(TOKEN_B), amount: 2000u128 },
+                initiator_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_A),
+                    amount: 1000u128,
+                },
+                counterparty_token: TokenInfo {
+                    address: Addr::unchecked(TOKEN_B),
+                    amount: 2000u128,
+                },
                 counterparty: counterparty_addr.clone(),
             };
 
-            let cosmos_msg = cw_template_contract.call(
-                initiate_msg,
-                coins(1000, TOKEN_A)
-            ).unwrap();
+            let cosmos_msg = cw_template_contract
+                .call(initiate_msg, coins(1000, TOKEN_A))
+                .unwrap();
 
             app.execute(initiator_addr.clone(), cosmos_msg).unwrap();
 
@@ -318,16 +420,36 @@ mod tests {
 
             app.execute(counterparty_addr.clone(), cosmos_msg).unwrap();
 
-            let initiator_token_a_balance = app.wrap().query_balance(initiator_addr.clone(), TOKEN_A).unwrap().amount.u128();
+            let initiator_token_a_balance = app
+                .wrap()
+                .query_balance(initiator_addr.clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(initiator_token_a_balance, 10000);
 
-            let counterparty_token_b_balance = app.wrap().query_balance(counterparty_addr.clone(), TOKEN_B).unwrap().amount.u128();
+            let counterparty_token_b_balance = app
+                .wrap()
+                .query_balance(counterparty_addr.clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(counterparty_token_b_balance, 10000);
 
-            let contract_token_a_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_A).unwrap().amount.u128();
+            let contract_token_a_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_A)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_a_balance, 0);
 
-            let contract_token_b_balance = app.wrap().query_balance(cw_template_contract.addr().clone(), TOKEN_B).unwrap().amount.u128();
+            let contract_token_b_balance = app
+                .wrap()
+                .query_balance(cw_template_contract.addr().clone(), TOKEN_B)
+                .unwrap()
+                .amount
+                .u128();
             assert_eq!(contract_token_b_balance, 0);
         }
     }

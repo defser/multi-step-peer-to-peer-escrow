@@ -1,7 +1,7 @@
+use crate::state::Agreement;
 use cosmwasm_std::Addr;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use crate::state::Agreement;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct InstantiateMsg {}
@@ -28,15 +28,29 @@ pub enum ExecuteMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
-    GetAgreement { id: u64 },
+    GetAgreement {
+        id: u64,
+    },
     GetTotalAgreementCount {},
     GetInitiatedAgreementCount {},
     GetAcceptedAgreementCount {},
     GetExecutedAgreementCount {},
     GetCanceledAgreementCount {},
-    GetAgreementsByInitiator { initiator: Addr, page: u64, page_size: u64 },
-    GetAgreementsByCounterparty { counterparty: Addr, page: u64, page_size: u64 },
-    GetAgreementsByStatus { status: String, page: u64, page_size: u64 },
+    GetAgreementsByInitiator {
+        initiator: Addr,
+        page: u64,
+        page_size: u64,
+    },
+    GetAgreementsByCounterparty {
+        counterparty: Addr,
+        page: u64,
+        page_size: u64,
+    },
+    GetAgreementsByStatus {
+        status: String,
+        page: u64,
+        page_size: u64,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
