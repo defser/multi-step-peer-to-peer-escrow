@@ -9,8 +9,8 @@ pub struct InstantiateMsg {}
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub enum ExecuteMsg {
     InitiateAgreement {
-        token_a: TokenInfo,
-        token_b: TokenInfo,
+        initiator_token: TokenInfo,
+        counterparty_token: TokenInfo,
         counterparty: Addr,
     },
     AcceptAgreement {

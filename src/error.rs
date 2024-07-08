@@ -3,15 +3,24 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ContractError {
-    #[error("{0}")]
+    #[error(transparent)]
     Std(#[from] StdError),
 
-    #[error("Unauthorized")]
-    Unauthorized {},
+    #[error("Unauthorized: expecting `{expected}`, found `{found}`")]
+    Unauthorized { expected: String, found: String },
 
     #[error("Insufficient funds sent")]
-    InsufficientFunds {},
+    InsufficientFunds { },
 
-    #[error("Invalid Agreement Status")]
-    InvalidAgreementStatus {},
+    #[error("Incorrect funds amount sent: expecting `{expected}`, found `{found}`")]
+    IncorrectFundsAmount { expected: String, found: String },
+
+    #[error("Invalid Agreement Status: expecting `{expected}`, found `{found}`")]
+    InvalidAgreementStatus { expected: String, found: String },
+
+    #[error("Unexpected funds found: expecting `{expected}`, found `{found}`")]
+    UnexpectedFunds { expected: String, found: String },
+
+    #[error("Insufficient contract funds: expecting `{expected}`, found `{found}`")]
+    InsufficientContractFunds { expected: String, found: String },
 }

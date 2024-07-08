@@ -8,9 +8,9 @@ use serde::{Deserialize, Serialize};
 pub struct Agreement {
     pub id: u64,
     pub initiator: Addr,
+    pub initiator_token: TokenInfo,
     pub counterparty: Addr,
-    pub token_a: TokenInfo,
-    pub token_b: TokenInfo,
+    pub counterparty_token: TokenInfo,
     pub status: String,
 }
 

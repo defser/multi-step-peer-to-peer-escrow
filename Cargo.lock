@@ -540,19 +540,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
 
 [[package]]
-name = "multi-token-agreement"
-version = "0.0.1"
-dependencies = [
- "cosmwasm-schema",
- "cosmwasm-std 2.0.4",
- "cosmwasm-storage",
- "cw-multi-test",
- "cw-storage-plus",
- "cw2",
- "schemars",
- "serde",
- "thiserror",
-]
+name = "log"
+version = "0.4.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 
 [[package]]
 name = "once_cell"
@@ -784,6 +775,22 @@ checksum = "77549399552de45a898a580c1b41d445bf730df867cc44e6c0233bbc4b8329de"
 dependencies = [
  "digest 0.10.7",
  "rand_core 0.6.4",
+]
+
+[[package]]
+name = "simple-token-agreement"
+version = "0.0.1"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std 2.0.4",
+ "cosmwasm-storage",
+ "cw-multi-test",
+ "cw-storage-plus",
+ "cw2",
+ "log",
+ "schemars",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
