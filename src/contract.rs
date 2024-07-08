@@ -8,7 +8,7 @@ use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
 use crate::state::{Agreement, AGREEMENTS, TOTAL_AGREEMENT_COUNT, query_agreement, query_agreements_by_initiator, query_agreements_by_counterparty, query_agreements_by_status, query_total_agreement_count, INITIATED_AGREEMENT_COUNT, ACCEPTED_AGREEMENT_COUNT, EXECUTED_AGREEMENT_COUNT, CANCELED_AGREEMENT_COUNT, query_initiated_agreement_count, query_accepted_agreement_count, query_executed_agreement_count, query_canceled_agreement_count};
 use crate::utils::{assert_agreement_has_status, assert_contract_has_sufficient_funds, assert_funds_match_token_amount, assert_sender_authorized, assert_sender_is_different_from_counterparty, assert_sender_matches_counterparty};
 
-const CONTRACT_NAME: &str = "crates.io:peer-to-peer-token-swap";
+const CONTRACT_NAME: &str = "crates.io:multi-step-peer-to-peer-escrow";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub const STATUS_INITIATED: &str = "initiated";

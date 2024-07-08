@@ -1,5 +1,5 @@
 [package]
-name = "peer-to-peer-token-swap"
+name = "multi-step-peer-to-peer-escrow"
 version = "0.0.1"
 authors = ["0xDEFSER <info@defser.nl>"]
 edition = "2021"
