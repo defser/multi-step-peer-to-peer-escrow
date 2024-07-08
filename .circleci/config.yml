@@ -57,5 +57,3 @@ workflows:
             branches:
               ignore:
                 - /.*/
-            requires:
-              - docker-image
