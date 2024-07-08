@@ -38,9 +38,9 @@ pub fn execute(
 ) -> Result<Response, ContractError> {
     match _msg {
         ExecuteMsg::InitiateAgreement { initiator_token, counterparty_token, counterparty } => {
-            try_initiate_agreement(deps, _env, _info, initiator_token, counterparty_token, counterparty)
+            try_initiate_agreement(deps, _info, initiator_token, counterparty_token, counterparty)
         }
-        ExecuteMsg::AcceptAgreement { id } => try_accept_agreement(deps, _env, _info, id),
+        ExecuteMsg::AcceptAgreement { id } => try_accept_agreement(deps, _info, id),
         ExecuteMsg::ExecuteAgreement { id } => try_execute_agreement(deps, _env, _info, id),
         ExecuteMsg::CancelAgreement { id } => try_cancel_agreement(deps, _info, id),
     }
@@ -48,7 +48,6 @@ pub fn execute(
 
 fn try_initiate_agreement(
     deps: DepsMut,
-    env: Env,
     info: MessageInfo,
     initiator_token: TokenInfo,
     counterparty_token: TokenInfo,
@@ -57,14 +56,6 @@ fn try_initiate_agreement(
     assert_funds_match_token_amount(&info.funds, &initiator_token)?;
 
     let id = AGREEMENT_COUNT.update(deps.storage, |count| -> StdResult<_> { Ok(count + 1) })?;
-
-    let mut messages = vec![];
-
-    let contract_address = env.contract.address.clone();
-    messages.push(BankMsg::Send {
-        to_address: contract_address.to_string(),
-        amount: vec![coin(initiator_token.amount, &initiator_token.address)],
-    });
 
     let agreement = Agreement {
         id,
@@ -78,14 +69,12 @@ fn try_initiate_agreement(
     AGREEMENTS.save(deps.storage, id, &agreement)?;
 
     Ok(Response::new()
-        .add_messages(messages)
         .add_attribute("method", "initiate_agreement")
         .add_attribute("id", id.to_string()))
 }
 
 fn try_accept_agreement(
     deps: DepsMut,
-    _env: Env,
     _info: MessageInfo,
     id: u64,
 ) -> Result<Response, ContractError> {
@@ -97,19 +86,10 @@ fn try_accept_agreement(
 
     assert_agreement_has_status(&agreement.status, &[INITIATED])?;
 
-    let mut messages = vec![];
-
-    let contract_address = _env.contract.address.clone();
-    messages.push(BankMsg::Send {
-        to_address: contract_address.to_string(),
-        amount: vec![coin(agreement.counterparty_token.amount, &agreement.counterparty_token.address)],
-    });
-
     agreement.status = ACCEPTED.to_string();
     AGREEMENTS.save(deps.storage, id, &agreement)?;
 
     Ok(Response::new()
-        .add_messages(messages)
         .add_attribute("method", "accept_agreement")
         .add_attribute("id", id.to_string()))
 }
