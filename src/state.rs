@@ -1,6 +1,6 @@
 use crate::msg::{AgreementResponse, AgreementsResponse, TokenInfo};
-use cosmwasm_std::{Addr, Deps, StdResult};
-use cw_storage_plus::{Item, Map};
+use cosmwasm_std::{Addr, Deps, Order, StdResult};
+use cw_storage_plus::{Bounder, Item, Map};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -22,9 +22,14 @@ pub fn query_agreement(deps: Deps, id: u64) -> StdResult<AgreementResponse> {
     Ok(AgreementResponse { agreement })
 }
 
-pub fn query_agreements_by_initiator(deps: Deps, initiator: Addr) -> StdResult<AgreementsResponse> {
+pub fn query_agreements_by_initiator(
+    deps: Deps,
+    initiator: Addr,
+    start_after: u64,
+    end_before: u64,
+) -> StdResult<AgreementsResponse> {
     let agreements: Vec<Agreement> = AGREEMENTS
-        .range(deps.storage, None, None, cosmwasm_std::Order::Ascending)
+        .range(deps.storage, start_after.inclusive_bound(), end_before.inclusive_bound(), Order::Ascending)
         .filter_map(|item| match item {
             Ok((_, agreement)) if agreement.initiator == initiator => Some(agreement),
             _ => None,
@@ -34,18 +39,34 @@ pub fn query_agreements_by_initiator(deps: Deps, initiator: Addr) -> StdResult<A
     Ok(AgreementsResponse { agreements })
 }
 
-pub fn query_agreements_by_counterparty(deps: Deps, counterparty: Addr) -> StdResult<AgreementsResponse> {
+pub fn query_agreements_by_counterparty(
+    deps: Deps,
+    counterparty: Addr,
+    start_after: u64,
+    end_before: u64,
+) -> StdResult<AgreementsResponse> {
     let agreements: Vec<Agreement> = AGREEMENTS
-        .range(deps.storage, None, None, cosmwasm_std::Order::Ascending)
+        .range(deps.storage, start_after.inclusive_bound(), end_before.inclusive_bound(), Order::Ascending)
         .filter_map(|item| match item {
-            Ok((_, agreement)) => {
-                if agreement.counterparty == counterparty {
-                    Some(agreement)
-                } else {
-                    None
-                }
-            },
-            Err(_) => None,
+            Ok((_, agreement)) if agreement.counterparty == counterparty => Some(agreement),
+            _ => None,
+        })
+        .collect();
+
+    Ok(AgreementsResponse { agreements })
+}
+
+pub fn query_agreements_by_status(
+    deps: Deps,
+    status: String,
+    start_after: u64,
+    end_before: u64,
+) -> StdResult<AgreementsResponse> {
+    let agreements: Vec<Agreement> = AGREEMENTS
+        .range(deps.storage, start_after.inclusive_bound(), end_before.inclusive_bound(), Order::Ascending)
+        .filter_map(|item| match item {
+            Ok((_, agreement)) if agreement.status == status => Some(agreement),
+            _ => None,
         })
         .collect();
 

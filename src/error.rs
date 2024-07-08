@@ -23,4 +23,7 @@ pub enum ContractError {
 
     #[error("Insufficient contract funds: expecting `{expected}`, found `{found}`")]
     InsufficientContractFunds { expected: String, found: String },
+
+    #[error("Invalid counterparty: counterparty `{counterparty}` cannot be the same as initiator `{initiator}`")]
+    InvalidCounterparty { initiator: String, counterparty: String },
 }

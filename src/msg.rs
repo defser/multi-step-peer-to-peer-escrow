@@ -25,12 +25,13 @@ pub enum ExecuteMsg {
     },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     GetAgreement { id: u64 },
-    GetAgreementsByInitiator { initiator: Addr },
-    GetAgreementsByCounterparty { counterparty: Addr },
+    GetAgreementsByInitiator { initiator: Addr, page: u64, page_size: u64 },
+    GetAgreementsByCounterparty { counterparty: Addr, page: u64, page_size: u64 },
+    GetAgreementsByStatus { status: String, page: u64, page_size: u64 },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

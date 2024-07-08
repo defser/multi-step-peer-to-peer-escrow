@@ -13,6 +13,17 @@ pub fn assert_sender_matches_counterparty(sender: &Addr, counterparty: &Addr) ->
     Ok(())
 }
 
+pub fn assert_sender_is_different_from_counterparty(sender: &Addr, counterparty: &Addr) -> Result<(), ContractError> {
+    if sender == counterparty {
+        return Err(ContractError::InvalidCounterparty {
+            initiator: sender.to_string(),
+            counterparty: counterparty.to_string()
+        });
+    }
+
+    Ok(())
+}
+
 pub fn assert_sender_authorized(sender: &Addr, authorized_senders: &[&Addr]) -> Result<(), ContractError> {
     if !authorized_senders.contains(&sender) {
         return Err(ContractError::Unauthorized {

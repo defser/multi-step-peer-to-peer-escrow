@@ -33,11 +33,23 @@
         "get_agreements_by_initiator": {
           "type": "object",
           "required": [
-            "initiator"
+            "initiator",
+            "page",
+            "page_size"
           ],
           "properties": {
             "initiator": {
               "$ref": "#/definitions/Addr"
+            },
+            "page": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "page_size": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
             }
           }
         }
@@ -53,11 +65,55 @@
         "get_agreements_by_counterparty": {
           "type": "object",
           "required": [
-            "counterparty"
+            "counterparty",
+            "page",
+            "page_size"
           ],
           "properties": {
             "counterparty": {
               "$ref": "#/definitions/Addr"
+            },
+            "page": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "page_size": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_agreements_by_status"
+      ],
+      "properties": {
+        "get_agreements_by_status": {
+          "type": "object",
+          "required": [
+            "page",
+            "page_size",
+            "status"
+          ],
+          "properties": {
+            "page": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "page_size": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "status": {
+              "type": "string"
             }
           }
         }
