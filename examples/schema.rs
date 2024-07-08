@@ -1,8 +1,8 @@
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
 use std::env::current_dir;
 use std::fs::create_dir_all;
-use my_first_contract::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
-use my_first_contract::state::Agreement;
+use multi_token_agreement::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
+use multi_token_agreement::state::Agreement;
 
 fn main() {
     let mut out_dir = current_dir().unwrap();

@@ -7,7 +7,6 @@ use crate::error::ContractError;
 use crate::msg::{AgreementResponse, AgreementsResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TokenInfo};
 use crate::state::{Agreement, AGREEMENTS, AGREEMENT_COUNT};
 
-// version info for migration info
 const CONTRACT_NAME: &str = "crates.io:multi-token-agreement";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 

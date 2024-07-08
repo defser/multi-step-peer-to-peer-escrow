@@ -1,5 +1,5 @@
 [package]
-name = "my-first-contract"
+name = "multi-token-agreement"
 version = "0.0.1"
 authors = ["0xDEFSER <info@defser.nl>"]
 edition = "2021"
