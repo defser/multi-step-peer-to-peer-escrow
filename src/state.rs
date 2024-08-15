@@ -1,9 +1,9 @@
-use cosmwasm_schema::cw_serde;
 use crate::msg::{
     AcceptedAgreementCountResponse, AgreementResponse, AgreementsResponse,
     CanceledAgreementCountResponse, ExecutedAgreementCountResponse,
     InitiatedAgreementCountResponse, TokenInfo, TotalAgreementCountResponse,
 };
+use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{Addr, Deps, Order, StdResult};
 use cw_storage_plus::{Bounder, Item, Map};
 

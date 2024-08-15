@@ -1,9 +1,19 @@
 mod unit_tests {
-    use cosmwasm_std::testing::{message_info, mock_dependencies_with_balances, mock_env, MockApi, MockQuerier, MockStorage};
+    use cosmwasm_std::testing::{
+        message_info, mock_dependencies_with_balances, mock_env, MockApi, MockQuerier, MockStorage,
+    };
     use cosmwasm_std::{coin, coins, from_json, Addr, Attribute, OwnedDeps};
-    use multi_step_peer_to_peer_escrow::contract::{execute, instantiate, query, STATUS_ACCEPTED, STATUS_CANCELED, STATUS_EXECUTED, STATUS_INITIATED};
+    use multi_step_peer_to_peer_escrow::contract::{
+        execute, instantiate, query, STATUS_ACCEPTED, STATUS_CANCELED, STATUS_EXECUTED,
+        STATUS_INITIATED,
+    };
+    use multi_step_peer_to_peer_escrow::msg::{
+        AcceptedAgreementCountResponse, AgreementResponse, AgreementsResponse,
+        CanceledAgreementCountResponse, ExecuteMsg, ExecutedAgreementCountResponse,
+        InitiatedAgreementCountResponse, InstantiateMsg, QueryMsg, TokenInfo,
+        TotalAgreementCountResponse,
+    };
     use multi_step_peer_to_peer_escrow::ContractError;
-    use multi_step_peer_to_peer_escrow::msg::{AcceptedAgreementCountResponse, AgreementResponse, AgreementsResponse, CanceledAgreementCountResponse, ExecuteMsg, ExecutedAgreementCountResponse, InitiatedAgreementCountResponse, InstantiateMsg, QueryMsg, TokenInfo, TotalAgreementCountResponse};
 
     #[test]
     fn contract_initialization() {
@@ -945,17 +955,20 @@ mod unit_tests {
 
         let query_accepted_msg = QueryMsg::GetAcceptedAgreementCount {};
         let query_accepted_res = query(deps.as_ref(), mock_env(), query_accepted_msg).unwrap();
-        let accepted_response: AcceptedAgreementCountResponse = from_json(&query_accepted_res).unwrap();
+        let accepted_response: AcceptedAgreementCountResponse =
+            from_json(&query_accepted_res).unwrap();
         assert_eq!(accepted_response.accepted_agreement_count, accepted);
 
         let query_executed_msg = QueryMsg::GetExecutedAgreementCount {};
         let query_executed_res = query(deps.as_ref(), mock_env(), query_executed_msg).unwrap();
-        let executed_response: ExecutedAgreementCountResponse = from_json(&query_executed_res).unwrap();
+        let executed_response: ExecutedAgreementCountResponse =
+            from_json(&query_executed_res).unwrap();
         assert_eq!(executed_response.executed_agreement_count, executed);
 
         let query_canceled_msg = QueryMsg::GetCanceledAgreementCount {};
         let query_canceled_res = query(deps.as_ref(), mock_env(), query_canceled_msg).unwrap();
-        let canceled_response: CanceledAgreementCountResponse = from_json(&query_canceled_res).unwrap();
+        let canceled_response: CanceledAgreementCountResponse =
+            from_json(&query_canceled_res).unwrap();
         assert_eq!(canceled_response.canceled_agreement_count, canceled);
     }
 }

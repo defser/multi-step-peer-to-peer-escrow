@@ -27,9 +27,7 @@ pub enum ExecuteMsg {
 #[derive(QueryResponses)]
 pub enum QueryMsg {
     #[returns(AgreementResponse)]
-    GetAgreement {
-        id: u64,
-    },
+    GetAgreement { id: u64 },
     #[returns(TotalAgreementCountResponse)]
     GetTotalAgreementCount {},
     #[returns(InitiatedAgreementCountResponse)]

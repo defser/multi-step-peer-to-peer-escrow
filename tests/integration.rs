@@ -18,16 +18,12 @@ mod integration_tests {
                 msg,
                 funds,
             }
-                .into())
+            .into())
         }
     }
 
     pub fn contract_template() -> Box<dyn Contract<Empty>> {
-        let contract = ContractWrapper::new(
-            execute,
-            instantiate,
-            query,
-        );
+        let contract = ContractWrapper::new(execute, instantiate, query);
         Box::new(contract)
     }
 
