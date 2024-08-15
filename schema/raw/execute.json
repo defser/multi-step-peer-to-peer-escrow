@@ -8,7 +8,6 @@
         "initiate_agreement"
       ],
       "properties": {
-
         "initiate_agreement": {
           "type": "object",
           "required": [
