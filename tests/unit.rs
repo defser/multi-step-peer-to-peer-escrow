@@ -401,15 +401,15 @@ mod unit_tests {
         // Arrange
         let mut deps = mock_dependencies_with_balances(&[
             (
-                (&Addr::unchecked("initiator")).as_ref(),
+                Addr::unchecked("initiator").as_ref(),
                 &[coin(1000, "tokenA")],
             ),
             (
-                (&Addr::unchecked("counterparty")).as_ref(),
+                Addr::unchecked("counterparty").as_ref(),
                 &[coin(2000, "tokenB")],
             ),
             (
-                (&Addr::unchecked("cosmos2contract")).as_ref(),
+                Addr::unchecked("cosmos2contract").as_ref(),
                 &[coin(500, "tokenA"), coin(1000, "tokenB")],
             ),
         ]);
@@ -846,15 +846,15 @@ mod unit_tests {
     fn initialize_contract() -> OwnedDeps<MockStorage, MockApi, MockQuerier> {
         let mut deps = mock_dependencies_with_balances(&[
             (
-                (&Addr::unchecked("initiator")).as_ref(),
+                Addr::unchecked("initiator").as_ref(),
                 &[coin(1000, "tokenA")],
             ),
             (
-                (&Addr::unchecked("counterparty")).as_ref(),
+                Addr::unchecked("counterparty").as_ref(),
                 &[coin(2000, "tokenB")],
             ),
             (
-                (&Addr::unchecked("cosmos2contract")).as_ref(),
+                Addr::unchecked("cosmos2contract").as_ref(),
                 &[coin(1000, "tokenA"), coin(2000, "tokenB")],
             ),
         ]);
@@ -929,7 +929,7 @@ mod unit_tests {
         );
 
         // Check agreement status counts
-        check_agreement_counts(&deps, 1, 1, 0, 0, 0);
+        check_agreement_counts(deps, 1, 1, 0, 0, 0);
 
         (initiator_token, counterparty_token, counterparty_addr)
     }

@@ -80,7 +80,7 @@ pub fn assert_agreement_has_status(
 
 // Asserts that the funds match the expected token amount.
 pub fn assert_funds_match_token_amount(
-    funds: &Vec<Coin>,
+    funds: &[Coin],
     token: &TokenInfo,
 ) -> Result<(), ContractError> {
     // Convert token amount from u128 to Uint128 for consistency
