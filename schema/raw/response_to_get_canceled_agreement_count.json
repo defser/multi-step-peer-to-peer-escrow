@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CanceledAgreementCountResponse",
+  "type": "object",
+  "required": [
+    "canceled_agreement_count"
+  ],
+  "properties": {
+    "canceled_agreement_count": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    }
+  },
+  "additionalProperties": false
+}

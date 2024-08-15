@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AcceptedAgreementCountResponse",
+  "type": "object",
+  "required": [
+    "accepted_agreement_count"
+  ],
+  "properties": {
+    "accepted_agreement_count": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    }
+  },
+  "additionalProperties": false
+}
