@@ -79,4 +79,4 @@ jobs:
           args: --locked
 
       - name: Schema Changes
-        run: git diff --quiet schema && exit 0
+        run: git diff --exit-code schema && exit 0
