@@ -1,13 +1,11 @@
 use crate::state::Agreement;
+use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Addr;
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct InstantiateMsg {}
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum ExecuteMsg {
     InitiateAgreement {
         initiator_token: TokenInfo,
@@ -25,27 +23,36 @@ pub enum ExecuteMsg {
     },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
+#[derive(QueryResponses)]
 pub enum QueryMsg {
+    #[returns(AgreementResponse)]
     GetAgreement {
         id: u64,
     },
+    #[returns(TotalAgreementCountResponse)]
     GetTotalAgreementCount {},
+    #[returns(InitiatedAgreementCountResponse)]
     GetInitiatedAgreementCount {},
+    #[returns(AcceptedAgreementCountResponse)]
     GetAcceptedAgreementCount {},
+    #[returns(ExecutedAgreementCountResponse)]
     GetExecutedAgreementCount {},
+    #[returns(CanceledAgreementCountResponse)]
     GetCanceledAgreementCount {},
+    #[returns(AgreementsResponse)]
     GetAgreementsByInitiator {
         initiator: Addr,
         page: u64,
         page_size: u64,
     },
+    #[returns(AgreementsResponse)]
     GetAgreementsByCounterparty {
         counterparty: Addr,
         page: u64,
         page_size: u64,
     },
+    #[returns(AgreementsResponse)]
     GetAgreementsByStatus {
         status: String,
         page: u64,
@@ -53,7 +60,7 @@ pub enum QueryMsg {
     },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct TokenInfo {
     pub address: Addr,
     pub amount: u128,
@@ -66,37 +73,37 @@ impl TokenInfo {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct AgreementResponse {
     pub agreement: Agreement,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct TotalAgreementCountResponse {
     pub total_agreement_count: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct InitiatedAgreementCountResponse {
     pub initiated_agreement_count: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct AcceptedAgreementCountResponse {
     pub accepted_agreement_count: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct ExecutedAgreementCountResponse {
     pub executed_agreement_count: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct CanceledAgreementCountResponse {
     pub canceled_agreement_count: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct AgreementsResponse {
     pub agreements: Vec<Agreement>,
 }

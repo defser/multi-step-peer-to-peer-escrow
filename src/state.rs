@@ -1,3 +1,4 @@
+use cosmwasm_schema::cw_serde;
 use crate::msg::{
     AcceptedAgreementCountResponse, AgreementResponse, AgreementsResponse,
     CanceledAgreementCountResponse, ExecutedAgreementCountResponse,
@@ -5,10 +6,8 @@ use crate::msg::{
 };
 use cosmwasm_std::{Addr, Deps, Order, StdResult};
 use cw_storage_plus::{Bounder, Item, Map};
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct Agreement {
     pub id: u64,
     pub initiator: Addr,

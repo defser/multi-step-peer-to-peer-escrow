@@ -1,15 +1,32 @@
-#[cfg(test)]
-mod tests {
-    use crate::helpers::CwTemplateContract;
-    use crate::msg::InstantiateMsg;
-    use cosmwasm_std::{Addr, Empty};
+mod integration_tests {
+    use cosmwasm_std::{to_json_binary, Addr, Coin, CosmosMsg, Empty, StdResult, WasmMsg};
     use cw_multi_test::{App, Contract, ContractWrapper, Executor};
+    use multi_step_peer_to_peer_escrow::contract::{execute, instantiate, query};
+    use multi_step_peer_to_peer_escrow::msg::{ExecuteMsg, InstantiateMsg};
+
+    struct CwTemplateContract(pub Addr);
+
+    impl CwTemplateContract {
+        pub fn addr(&self) -> Addr {
+            self.0.clone()
+        }
+
+        pub fn call<T: Into<ExecuteMsg>>(&self, msg: T, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
+            let msg = to_json_binary(&msg.into())?;
+            Ok(WasmMsg::Execute {
+                contract_addr: self.addr().into(),
+                msg,
+                funds,
+            }
+                .into())
+        }
+    }
 
     pub fn contract_template() -> Box<dyn Contract<Empty>> {
         let contract = ContractWrapper::new(
-            crate::contract::execute,
-            crate::contract::instantiate,
-            crate::contract::query,
+            execute,
+            instantiate,
+            query,
         );
         Box::new(contract)
     }
@@ -43,8 +60,8 @@ mod tests {
 
     mod agreement_tests {
         use super::*;
-        use crate::msg::{ExecuteMsg, TokenInfo};
         use cosmwasm_std::coins;
+        use multi_step_peer_to_peer_escrow::msg::{ExecuteMsg, TokenInfo};
 
         #[test]
         fn initiate_agreement() {
