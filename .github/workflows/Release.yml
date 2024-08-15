@@ -22,7 +22,7 @@ jobs:
           args: optimize
       - name: Get release ID
         id: get_release
-        uses: bruceadams/get-release@v1.2.3
+        uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload optimized wasm
